@@ -54,6 +54,7 @@ public:
     double upperLimit() const;
 
 /**===================================== PUBLIC MEMBER FUNCTIONS =====================================**/
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Membership Functions Management
     //this method can throws: fuzzy::exceptions::DuplicatedItemException,
     //                        fuzzy::knowledgeModule::memberFunctions::MFException
     //                        std::bad_alloc
@@ -65,6 +66,8 @@ public:
     tsize membershipFunctionCount() const;
     //this method can throws: fuzzy::exceptions::NonExistentElementException
     const knowledgeModule::memberFunctions::MembershipFunction &membershipFunction(tsize id) const;
+    //this method can throws: fuzzy::exceptions::NonExistentElementException
+    knowledgeModule::memberFunctions::MembershipFunction &membershipFunction(tsize id);
     int idMembershipFunction(const std::string &name) const;
     //this method can throws: fuzzy::exceptions::NonExistentElementException
     void replaceMembershipFunction(const knowledgeModule::memberFunctions::MembershipFunction &membershipFunction,
@@ -77,7 +80,7 @@ private:
     double _lowerLimit;
     double _upperLimit;
 
-    std::map<tsize, memberFunctions::MembershipFunction> memberFunctions;
+    std::map<tsize, memberFunctions::MembershipFunction> _memberFunctions;
 };
 
 }

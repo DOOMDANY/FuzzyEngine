@@ -16,18 +16,13 @@
  ****************************************************************/
 
 /**===================*~* STL LIBRARIES *~*===================**/
-#include <vector>
+#include <map>
 #include <string>
 
 /**===================*~* OWN LIBRARIES *~*===================**/
 #include "knowledgemodule.hpp"
-
-/**===================*~* FORWARD DECLARATIONS *~*===================**/
-namespace linkedContainers
-{
-    template<typename T>
-    class LStack;
-}
+#include "linguisticvariable.hpp"
+#include "rule.hpp"
 
 namespace fuzzy
 {
@@ -36,6 +31,7 @@ namespace knowledgeModule
 
 class KnowledgeBase
 {
+public:
 /**===================================== CONSTRUCTORS =====================================**/
     KnowledgeBase(const std::string &name);
 
@@ -47,37 +43,48 @@ class KnowledgeBase
     const std::string &name() const;
 
 /**===================================== PUBLIC MEMBER FUNCTIONS =====================================**/
-    bool createRule(const std::vector<std::string> &atomList);
-    //this method can throws: std::out_of_range
-    const Rule &rule(int ruleId) const;
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Rules Management
+    bool createRule(const std::string &ruleStr);
+    //this method can throws: fuzzy::exceptions::NonExistentElementException<tsize>
+    const Rule &rule(tsize idRule) const;
     tsize ruleCount() const;
-    bool replaceRule(tsize ruleId, const std::string &atomList);
-    void RemoveRule(tsize ruleId);
+    bool replaceRule(tsize idRule, const std::string &ruleStr);
+    void removeRule(tsize idRule);
 
-    bool createLinguisticVariable(const std::string &name, double lowerLimit, double upperLimit, bool isInput);
-    //this method can throws: std::out_of_range
-    const LinguisticVariable &linguisticVariable(tsize lvId, bool isInput) const;
-    int linguisticVariableId(const std::string &name, bool isInput) const;
-    tsize linguisticVariableCount(bool isInput) const;
-    bool renameLinguisticVariable(tsize lvId, bool isInput, const std::string &name);
-    bool setLinguisticVariableLimits(int lvId, bool isInput, double lowerLimit, double upperLimit);
-    void removeLinguisticVariable(tsize lvId, bool isInput);
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Linguistic Variables Management
+    bool createLinguisticVariable(const std::string &name, double lowerLimit, double upperLimit, bool isInput = true);
+    //this method can throws: fuzzy::exceptions::NonExistentElementException<tsize>
+    const LinguisticVariable &linguisticVariable(tsize idLv, bool isInput = true) const;
+    int idLinguisticVariable(const std::string &name, bool isInput = true) const;
+    tsize linguisticVariableCount(bool isInput = true) const;
+    bool renameLinguisticVariable(const std::string &name, tsize idLv, bool isInput = true);
+    bool setLinguisticVariableLimits(double lowerLimit, double upperLimit, int idLv, bool isInput = true);
+    void removeLinguisticVariable(tsize idLv, bool isInput = true);
 
-    bool createMembershipFunction(tsize lvId, const std::string &name, memberFunctions::MFType type,
-                                  const std::vector<double> &params, bool isInput);
-    bool createMembershipFunction(tsize lvId, const std::string &name, const std::string &expression, bool isInput);
-    const memberFunctions::MembershipFunction &membershipFunction(tsize lvId, int mfId, bool isInput) const;
-    int membershipFunctionId(tsize lvId, const std::string &name, bool isInput) const;
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Membership Functions Management
+    bool createMembershipFunction(const std::string &name, memberFunctions::MFType type, const double *params,
+                                  tsize idLv, bool isInput = true);
+    bool createMembershipFunction(const std::string &name, const std::string &expression, tsize idLv,
+                                  bool isInput = true);
+    //this method can throws: fuzzy::exceptions::NonExistentElementException< vector<tsize> >
+    const memberFunctions::MembershipFunction &membershipFunction(tsize idLv, tsize idMf, bool isInput = true) const;
+    int idMembershipFunction(tsize idLv, const std::string &name, bool isInput = true) const;
     //this method can throws: std::out_of_range
-    tsize membershipFunctionCount(tsize lvId, bool isInput) const;
-    bool renameMembershipFunction(tsize lvId, tsize mfId, bool isInput, const std::string &name);
-    bool setMembershipFunctionParameters(tsize lvId, tsize mfId, bool isInput, const std::vector<double> &params);
-    bool setMembershipFunctionType(tsize lvId, bool isInput, tsize mfId, memberFunctions::MFType type);
-    void RemoveMembershipFunction(tsize lvId, tsize mfId, bool isInput);
+    tsize membershipFunctionCount(tsize idLv, bool isInput = true) const;
+    bool renameMembershipFunction(const std::string &name, tsize idLv, tsize idMf, bool isInput = true);
+    bool setMembershipFunctionParameters(const double *params, tsize idLv, tsize idMf, bool isInput = true);
+    bool setMembershipFunctionExpression(const std::string &expression, tsize idLv, tsize idMf, bool isInput = true);
+    bool setMembershipFunctionType(memberFunctions::MFType type, const double *params, tsize idLv, tsize idMf,
+                                   bool isInput = true);
+    void removeMembershipFunction(tsize idLv, tsize idMf, bool isInput = true);
 
 private:
 /**===================================== PRIVATE MEMBER VARIABLES =====================================**/
     std::string _name;
+
+    std::map<tsize, Rule> _rules;
+    std::map<tsize, LinguisticVariable> _inputs;
+    std::map<tsize, LinguisticVariable> _outputs;
 
 };
 

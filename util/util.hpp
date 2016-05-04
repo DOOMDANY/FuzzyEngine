@@ -1,5 +1,5 @@
-#ifndef EXCEPTIONS
-#define EXCEPTIONS
+#ifndef UTIL
+#define UTIL
 
 /*! *************************************************************
  *                                                              *
@@ -8,29 +8,33 @@
  *          dapr.service@gmail.com                              *
  *          Tel. (33) 3812 5330                                 *
  *          Cel. +52 1 33 1074 1591                             *
- * \date    February, 2016                                      *
+ * \date    March, 2016                                         *
  * \version 0.3                                                 *
  *                                                              *
- * \file    exceptions.hpp                                      *
+ * \file    util.hpp                                            *
  *                                                              *
  ****************************************************************/
 
-/**===================*~* OWN LIBRARIES *~*===================**/
-#include "fuzzy.hpp"
+/**===================*~* STL LIBRARIES *~*===================**/
+#include <string>
 
-namespace fuzzy
+namespace util
 {
-namespace exceptions
-{
+
+/**===================================== FUNCTIONS =====================================**/
+bool isLogicalOperator(char c);
+bool isAssignmentOperator(char c);
+bool isOperator(char c);
+
+bool isSpace(char c);
+std::string simplify(const std::string &str);
+
+std::string toUpper(const std::string &str);
 
 /**===================================== NAMESPACE CLASSES =====================================**/
-class BadInstanceException;
-class DuplicatedItemException;
-template<class T>
-class NonExistentElementException;
+class StringTokenizer;
 
 }
-}
 
-#endif // EXCEPTIONS
+#endif // UTIL
 

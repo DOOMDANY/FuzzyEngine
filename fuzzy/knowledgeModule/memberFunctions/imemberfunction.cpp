@@ -59,6 +59,15 @@ IMemberFunction::IMemberFunction(MFType type, const double *params, tsize paramN
         _params[i] = params[i];
 }
 
+IMemberFunction::IMemberFunction(const IMemberFunction &other) :
+    _type(MAX_TYPE),
+    _proprietary(NULL),
+    _params(NULL),
+    _paramNumber(0u)
+{
+    *this = other;
+}
+
 /**===================================== DESTRUCTOR =====================================**/
 IMemberFunction::~IMemberFunction()
 {
@@ -86,6 +95,38 @@ void IMemberFunction::setParameters(const double *params)
 const double *IMemberFunction::parameters() const
 {
     return _params;
+}
+
+/**===================================== OVERLOADED OPERATORS =====================================**/
+const IMemberFunction &IMemberFunction::operator = (const IMemberFunction &other)
+{
+    const double *paramsAux = _params;
+
+    *const_cast<MFType*>(&_type) = other.type();
+    *const_cast<const LinguisticVariable**>(&_proprietary) = other.proprietary();
+
+    *const_cast<tsize*>(&_paramNumber) = other._paramNumber;
+    *const_cast<double**>(&_params) = new double[_paramNumber];
+    setParameters(other.parameters());
+
+    if(paramsAux != NULL)
+        delete paramsAux;
+
+    return *this;
+}
+
+IMemberFunction &IMemberFunction::operator = (IMemberFunction &&other)
+{
+    const double *paramsAux = _params;
+
+    *const_cast<MFType*>(&_type) = other.type();
+    *const_cast<const LinguisticVariable**>(&_proprietary) = other.proprietary();
+    *const_cast<tsize*>(&_paramNumber) = other._paramNumber;
+    *const_cast<double**>(&_params) = other._params;
+
+    *const_cast<double**>(&other._params) = const_cast<double*>(paramsAux);
+
+    return *this;
 }
 
 

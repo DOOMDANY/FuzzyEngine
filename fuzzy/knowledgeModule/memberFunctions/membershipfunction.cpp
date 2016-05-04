@@ -35,19 +35,29 @@ static string nonExpressionStr;
 
 /**===================================== CONSTRUCTORS =====================================**/
 //this method can throws: fuzzy::knowledgeModule::memberFunctions::MFException
+//                        std::bad_alloc
 MembershipFunction::MembershipFunction(const string &name, MFType type, const double *params,
                                        const LinguisticVariable *proprietary) :
+    IRulePart(),
     _name(name)
 {
     createMemberFunction(type, params, proprietary);
 }
 
 //this method can throws: fuzzy::knowledgeModule::memberFunctions::MFException
+//                        std::bad_alloc
 MembershipFunction::MembershipFunction(const string &name, const string &expression,
                                        const LinguisticVariable *proprietary) :
+    IRulePart(),
     _name(name)
 {
     createMemberFunction(expression, proprietary);
+}
+
+MembershipFunction::MembershipFunction(const MembershipFunction &other) :
+    _memberFunction(NULL)
+{
+    *this = other;
 }
 
 /**===================================== DESTRUCTOR =====================================**/
@@ -68,6 +78,7 @@ const string &MembershipFunction::name() const
     return _name;
 }
 
+//this method can throws: fuzzy::knowledgeModule::memberFunctions::MFException
 void MembershipFunction::setParameters(const double *params)
 {
     _memberFunction->setParameters(params);
@@ -78,6 +89,7 @@ const double *MembershipFunction::Parameters() const
     return _memberFunction->parameters();
 }
 
+//this method can throws: fuzzy::knowledgeModule::memberFunctions::MFException
 void MembershipFunction::setExpression(const string &expression)
 {
     MFCustom *mf = dynamic_cast<MFCustom*>(_memberFunction);
@@ -94,7 +106,9 @@ const string &MembershipFunction::expression() const
         return nonExpressionStr;
 }
 
-void MembershipFunction::setType(MFType type)
+//this method can throws: fuzzy::knowledgeModule::memberFunctions::MFException
+//                        std::bad_alloc
+void MembershipFunction::setType(MFType type, const double *newParams)
 {
     IMemberFunction *memberFunction;
 
@@ -106,19 +120,28 @@ void MembershipFunction::setType(MFType type)
     memberFunction = _memberFunction;
     try
     {
-        if(newParamCount <= oldParamCount)
-            createMemberFunction(type, _memberFunction->parameters(), _memberFunction->proprietary());
+        if(params == NULL)
+        {
+            if(newParamCount <= oldParamCount)
+            {
+                createMemberFunction(type, _memberFunction->parameters(), _memberFunction->proprietary());
+            }
+            else
+            {
+                for(tsize i = 0; i < oldParamCount; i++)
+                    params[i] = _memberFunction->parameters()[i];
+                for(tsize i = oldParamCount; i < newParamCount; i++)
+                    params[i] = 0.0;
+
+                createMemberFunction(type, params, _memberFunction->proprietary());
+            }
+        }
         else
         {
-            for(tsize i = 0; i < oldParamCount; i++)
-                params[i] = _memberFunction->parameters()[i];
-            for(tsize i = oldParamCount; i < newParamCount; i++)
-                params[i] = _memberFunction->parameters()[i];
-
-            createMemberFunction(type, params, _memberFunction->proprietary());
+            createMemberFunction(type, newParams, _memberFunction->proprietary());
         }
     }
-    catch(exception &e)
+    catch(exception *e)
     {
         _memberFunction = memberFunction;
         throw e;
@@ -135,7 +158,44 @@ const LinguisticVariable *MembershipFunction::proprietary() const
     return _memberFunction->proprietary();
 }
 
+/**===================================== PUBLIC MEMBER FUNCTIONS =====================================**/
+double MembershipFunction::membershipGrade(double value) const
+{
+    return _memberFunction->membershipGrade(value);
+}
+
+/**===================================== OVERLOADED OPERATORS =====================================**/
+const MembershipFunction &MembershipFunction::operator = (const MembershipFunction &other)
+{
+    IMemberFunction *mfAux = _memberFunction;
+
+    _name = other._name;
+    if(other.type() != CUSTOM)
+        createMemberFunction(other.type(), other.Parameters(), other.proprietary());
+    else
+        createMemberFunction(other.expression(), other.proprietary());
+
+    if(mfAux != NULL)
+        delete mfAux;
+
+    return *this;
+}
+
+MembershipFunction &MembershipFunction::operator = (MembershipFunction &&other)
+{
+    IMemberFunction *mfAux = _memberFunction;
+
+    _name = other._name;
+    _memberFunction = other._memberFunction;
+
+    other._memberFunction = mfAux;
+
+    return *this;
+}
+
 /**===================================== PRIVATE MEMBER FUNCTIONS =====================================**/
+//this method can throws: fuzzy::knowledgeModule::memberFunctions::MFException
+//                        std::bad_alloc
 void MembershipFunction::createMemberFunction(MFType type, const double *params, const LinguisticVariable *proprietary)
 {
     switch(type)
@@ -163,6 +223,8 @@ void MembershipFunction::createMemberFunction(MFType type, const double *params,
     }
 }
 
+//this method can throws: fuzzy::knowledgeModule::memberFunctions::MFException
+//                        std::bad_alloc
 void MembershipFunction::createMemberFunction(const string &expression, const LinguisticVariable *proprietary)
 {
     _memberFunction = new MFCustom(expression, proprietary);

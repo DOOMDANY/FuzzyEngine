@@ -38,6 +38,8 @@ public:
     //throws: fuzzy::knowledgeModule::memberFunctions::MFException
     IMemberFunction(MFType type, const double *params, tsize paramNumber, const LinguisticVariable *proprietary);
 
+    IMemberFunction(const IMemberFunction &other);
+
 /**===================================== DESTRUCTOR =====================================**/
     virtual ~IMemberFunction();
 
@@ -52,6 +54,10 @@ public:
 /**===================================== PUBLIC MEMBER FUNCTIONS =====================================**/
     virtual double membershipGrade(double value) const = 0;
 
+/**===================================== OVERLOADED OPERATORS =====================================**/
+    const IMemberFunction &operator = (const IMemberFunction &other);
+    IMemberFunction &operator = (IMemberFunction &&other);
+
 protected:
 /**===================================== PROTECTED MEMBER VARIABLES =====================================**/
     const MFType _type;
@@ -61,7 +67,7 @@ protected:
     const tsize _paramNumber;
 
 private:
-/**===================================== PUBLIC STATIC VARIABLES =====================================**/
+/**===================================== PRIVATE STATIC VARIABLES =====================================**/
     static const tsize MFSizes[MAX_TYPE];
 
 };

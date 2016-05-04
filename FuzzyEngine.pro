@@ -35,7 +35,13 @@ SOURCES += main.cpp \
     fuzzy/knowledgeModule/memberFunctions/mfsigmoid.cpp \
     fuzzy/knowledgeModule/memberFunctions/mfsingleton.cpp \
     fuzzy/knowledgeModule/memberFunctions/mftrapezoid.cpp \
-    fuzzy/knowledgeModule/memberFunctions/mftriangle.cpp
+    fuzzy/knowledgeModule/memberFunctions/mftriangle.cpp \
+    fuzzy/knowledgeModule/irulepart.cpp \
+    fuzzy/knowledgeModule/logicaloperator.cpp \
+    fuzzy/knowledgeModule/rule.cpp \
+    fuzzy/exceptions/badinstanceexception.cpp \
+    util/stringtokenizer.cpp \
+    util/util.cpp
 
 HEADERS += \
     fuzzy/fuzzyengine.hpp \
@@ -56,6 +62,14 @@ HEADERS += \
     fuzzy/knowledgeModule/memberFunctions/mfsigmoid.hpp \
     fuzzy/knowledgeModule/memberFunctions/mfsingleton.hpp \
     fuzzy/knowledgeModule/memberFunctions/mftrapezoid.hpp \
-    fuzzy/knowledgeModule/memberFunctions/mftriangle.hpp
+    fuzzy/knowledgeModule/memberFunctions/mftriangle.hpp \
+    fuzzy/knowledgeModule/irulepart.hpp \
+    fuzzy/knowledgeModule/logicaloperator.hpp \
+    fuzzy/knowledgeModule/rule.hpp \
+    linkedContainers/linkedcontainers.hpp \
+    linkedContainers/lstack.hpp \
+    fuzzy/exceptions/badinstanceexception.hpp \
+    util/stringtokenizer.hpp \
+    util/util.hpp
 
 

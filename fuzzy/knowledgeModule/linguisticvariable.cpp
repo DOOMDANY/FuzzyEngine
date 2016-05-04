@@ -91,49 +91,60 @@ double LinguisticVariable::upperLimit() const
 /**===================================== PUBLIC MEMBER FUNCTIONS =====================================**/
 void LinguisticVariable::createMembershipFunction(const string &functionName, const double *params, MFType type)
 {
-    if(memberFunctions.empty())
-        memberFunctions.insert(std::pair<tsize, MembershipFunction>(
-                                   1u,
-                                   MembershipFunction(functionName, type, params, this)));
+    if(_memberFunctions.empty())
+        _memberFunctions.insert(pair<tsize, MembershipFunction>
+                                (1u, MembershipFunction(functionName, type, params, this)));
     else
     {
-        if(idMembershipFunction(functionName) >= 0)
+        if(idMembershipFunction(functionName) > 0)
             throw(DuplicatedItemException("The new Member Function name already exists"));
         else
-            memberFunctions.insert(std::pair<tsize, MembershipFunction>(
-                                       memberFunctions.rbegin()->first + 1,
-                                       MembershipFunction(functionName, type, params, this)));
+        {
+            _memberFunctions.insert(pair<tsize, MembershipFunction>
+                                    (_memberFunctions.crbegin()->first + 1u,
+                                     MembershipFunction(functionName, type, params, this)));
+        }
     }
 }
 
 void LinguisticVariable::createMembershipFunction(const string &functionName, const string &expression)
 {
-    if(memberFunctions.empty())
-        memberFunctions.insert(std::pair<tsize, MembershipFunction>(
-                                   1u,
-                                   MembershipFunction(functionName, expression, this)));
+    if(_memberFunctions.empty())
+        _memberFunctions.insert(std::pair<tsize, MembershipFunction>
+                                (1u, MembershipFunction(functionName, expression, this)));
     else
     {
-        if(idMembershipFunction(functionName) >= 0)
+        if(idMembershipFunction(functionName) > 0)
             throw(DuplicatedItemException("The new Member Function name already exists"));
         else
-            memberFunctions.insert(std::pair<tsize, MembershipFunction>(
-                                       memberFunctions.rbegin()->first + 1,
-                                       MembershipFunction(functionName, expression, this)));
+            _memberFunctions.insert(pair<tsize, MembershipFunction>
+                                    (_memberFunctions.crbegin()->first + 1u,
+                                     MembershipFunction(functionName, expression, this)));
     }
 }
 
 tsize LinguisticVariable::membershipFunctionCount() const
 {
-    return memberFunctions.size();
+    return _memberFunctions.size();
 }
 
 const MembershipFunction &LinguisticVariable::membershipFunction(tsize id) const
 {
     map<tsize, MembershipFunction>::const_iterator it;
 
-    it = memberFunctions.find(id);
-    if(it == memberFunctions.end())
+    it = _memberFunctions.find(id);
+    if(it == _memberFunctions.cend())
+        throw NonExistentElementException<tsize>(id);
+    else
+        return it->second;
+}
+
+MembershipFunction &LinguisticVariable::membershipFunction(tsize id)
+{
+    map<tsize, MembershipFunction>::iterator it;
+
+    it = _memberFunctions.find(id);
+    if(it == _memberFunctions.end())
         throw NonExistentElementException<tsize>(id);
     else
         return it->second;
@@ -141,7 +152,8 @@ const MembershipFunction &LinguisticVariable::membershipFunction(tsize id) const
 
 int LinguisticVariable::idMembershipFunction(const string &name) const
 {
-    for(map<tsize, MembershipFunction>::const_iterator it = memberFunctions.cbegin(); it != memberFunctions.cend(); it++)
+    for(map<tsize, MembershipFunction>::const_iterator it = _memberFunctions.cbegin();
+        it != _memberFunctions.cend(); it++)
         if(it->second.name() == name)
             return it->first;
 
@@ -152,8 +164,8 @@ void LinguisticVariable::replaceMembershipFunction(const MembershipFunction &mem
 {
     map<tsize, MembershipFunction>::iterator it;
 
-    it = memberFunctions.find(id);
-    if(it == memberFunctions.end())
+    it = _memberFunctions.find(id);
+    if(it == _memberFunctions.end())
         throw NonExistentElementException<tsize>(id);
     else
         it->second = membershipFunction;
@@ -161,7 +173,7 @@ void LinguisticVariable::replaceMembershipFunction(const MembershipFunction &mem
 
 void LinguisticVariable::removeMembershipFunction(tsize id)
 {
-    memberFunctions.erase(id);
+    _memberFunctions.erase(id);
 }
 
 

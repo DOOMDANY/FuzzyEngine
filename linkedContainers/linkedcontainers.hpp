@@ -1,5 +1,5 @@
-#ifndef EXCEPTIONS
-#define EXCEPTIONS
+#ifndef LINKEDCONTAINERS
+#define LINKEDCONTAINERS
 
 /*! *************************************************************
  *                                                              *
@@ -8,29 +8,44 @@
  *          dapr.service@gmail.com                              *
  *          Tel. (33) 3812 5330                                 *
  *          Cel. +52 1 33 1074 1591                             *
- * \date    February, 2016                                      *
+ * \date    March, 2016                                         *
  * \version 0.3                                                 *
  *                                                              *
- * \file    exceptions.hpp                                      *
+ * \file    linkedcontainers.hpp                                *
  *                                                              *
  ****************************************************************/
 
-/**===================*~* OWN LIBRARIES *~*===================**/
-#include "fuzzy.hpp"
+namespace linkedContainers
+{
+/**===================================== NAMESPACE MEMBERS =====================================**/
+typedef unsigned int tsize;
 
-namespace fuzzy
+/**===================================== NAMESPACE STRUCTURES =====================================**/
+template<typename T>
+struct Node
 {
-namespace exceptions
+    T data;
+    Node<T>* next;
+};
+
+template<typename T>
+struct DLNode : public Node<T>
 {
+    Node<T>* prev;
+};
 
 /**===================================== NAMESPACE CLASSES =====================================**/
-class BadInstanceException;
-class DuplicatedItemException;
-template<class T>
-class NonExistentElementException;
+template<typename T>
+class LStack;
 
 }
-}
 
-#endif // EXCEPTIONS
+#endif // LINKEDCONTAINERS
+
+
+
+
+
+
+
 

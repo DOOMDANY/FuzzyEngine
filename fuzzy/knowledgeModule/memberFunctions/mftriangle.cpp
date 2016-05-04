@@ -29,7 +29,7 @@ using namespace fuzzy::knowledgeModule::memberFunctions;
 MFTriangle::MFTriangle(const double *params, const LinguisticVariable *proprietary) :
     IMemberFunction(TRIANGLE, params, 3, proprietary)
 {
-    for(unsigned int i = 1; i < _paramNumber; i++)
+    for(tsize i = 1; i < _paramNumber; i++)
         if(params[i - 1] > params[i])
             throw(MFException(MFException::BAD_PARAMS));
 }

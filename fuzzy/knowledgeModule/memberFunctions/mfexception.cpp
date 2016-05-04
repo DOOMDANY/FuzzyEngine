@@ -64,24 +64,24 @@ void MFException::BuildMessage()
     switch(_code)
     {
         case MFException::StateCodes::BAD_PARAMS:
-            _msg = "Some parameter is missing or has a not allowed value";
+            _msg = "BAD_PARAMS: Some parameter is missing or has a not allowed value";
         break;
         case MFException::StateCodes::INVALID_EXPRESSION:
-            _msg = "the mathematical expression is not valid";
+            _msg = "INVALID_EXPRESSION: The mathematical expression is not valid";
         break;
         case MFException::StateCodes::INVALID_NAME:
-            _msg = "The MF name cannot be empty string";
+            _msg = "INVALID_NAME: The MF name cannot be empty string";
         break;
         case MFException::StateCodes::NULL_PROPRIETARY:
-            _msg = "Ptr to the proprietary LV is NULL";
+            _msg = "NULL_PROPRIETARY: Ptr to the proprietary LV is NULL";
         break;
         case MFException::StateCodes::OUT_OF_RANGE:
-            _msg = "The membership grade is less than lower limit or greater than upper limit";
+            _msg = "OUT_OF_RANGE: The membership grade is less than lower limit or greater than upper limit";
         break;
         case MFException::StateCodes::INVALID_MF:
-            _msg = "The requested MF does not exist";
+            _msg = "INVALID_MF: The requested MF does not exist";
         break;
         case UNKNOWN: default:
-            _msg = "Error Unkown";
+            _msg = "UNKNOWN: Unkown error";
     }
 }

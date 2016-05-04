@@ -24,6 +24,15 @@ namespace fuzzy
 /**===============================*~* NAMESPACE TYPES *~*===============================**/
 typedef unsigned int tsize;
 
+/**===============================*~* NAMESPACE ENUMS *~*===============================**/
+enum LogicalOperators
+{
+    AND,
+    OR,
+    NOT,
+    XOR
+};
+
 /**===============================*~* NAMESPACE CLASES *~*===============================**/
 class FuzzyEngine;
 

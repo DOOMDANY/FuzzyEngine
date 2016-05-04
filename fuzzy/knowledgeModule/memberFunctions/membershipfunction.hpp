@@ -20,6 +20,8 @@
 
 /**===================*~* OWN LIBRARIES *~*===================**/
 #include "memberfunctions.hpp"
+#include "imemberfunction.hpp"
+#include "irulepart.hpp"
 
 namespace fuzzy
 {
@@ -28,15 +30,19 @@ namespace knowledgeModule
 namespace memberFunctions
 {
 
-class MembershipFunction
+class MembershipFunction : public IRulePart
 {
 public:
 /**===================================== CONSTRUCTORS =====================================**/
     //this method can throws: fuzzy::knowledgeModule::memberFunctions::MFException
+    //                        std::bad_alloc
     MembershipFunction(const std::string &name, MFType type, const double *params,
                        const LinguisticVariable *proprietary);
     //this method can throws: fuzzy::knowledgeModule::memberFunctions::MFException
+    //                        std::bad_alloc
     MembershipFunction(const std::string &name, const std::string &expression, const LinguisticVariable *proprietary);
+
+    MembershipFunction(const MembershipFunction &other);
 
 /**===================================== DESTRUCTOR =====================================**/
     virtual ~MembershipFunction();
@@ -45,16 +51,27 @@ public:
     void rename(const std::string &name);
     const std::string &name() const;
 
+    //this method can throws: fuzzy::knowledgeModule::memberFunctions::MFException
     void setParameters(const double *params);
     const double *Parameters() const;
 
+    //this method can throws: fuzzy::knowledgeModule::memberFunctions::MFException
     void setExpression(const std::string &expression);
     const std::string &expression() const;
 
-    void setType(MFType type);
+    //this method can throws: fuzzy::knowledgeModule::memberFunctions::MFException
+    //                        std::bad_alloc
+    void setType(MFType type, const double *newParams = NULL);
     MFType type() const;
 
     const LinguisticVariable *proprietary() const;
+
+/**===================================== PUBLIC MEMBER FUNCTIONS =====================================**/
+    double membershipGrade(double value) const;
+
+/**===================================== OVERLOADED OPERATORS =====================================**/
+    const MembershipFunction &operator = (const MembershipFunction &other);
+    MembershipFunction &operator = (MembershipFunction &&other);
 
 private:
 /**===================================== PRIVATE MEMBER VARIABLES =====================================**/
@@ -62,7 +79,11 @@ private:
     IMemberFunction *_memberFunction;
 
 /**===================================== PRIVATE MEMBER FUNCTIONS =====================================**/
+    //this method can throws: fuzzy::knowledgeModule::memberFunctions::MFException
+    //                        std::bad_alloc
     void createMemberFunction(MFType type, const double *params, const LinguisticVariable *proprietary);
+    //this method can throws: fuzzy::knowledgeModule::memberFunctions::MFException
+    //                        std::bad_alloc
     void createMemberFunction(const std::string &expression, const LinguisticVariable *proprietary);
 
 };

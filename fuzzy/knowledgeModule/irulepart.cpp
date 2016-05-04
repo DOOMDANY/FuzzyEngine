@@ -1,6 +1,3 @@
-#ifndef EXCEPTIONS
-#define EXCEPTIONS
-
 /*! *************************************************************
  *                                                              *
  * \author  Daniel Alejandro Plascencia Ruiz.                   *
@@ -8,29 +5,27 @@
  *          dapr.service@gmail.com                              *
  *          Tel. (33) 3812 5330                                 *
  *          Cel. +52 1 33 1074 1591                             *
- * \date    February, 2016                                      *
+ * \date    March, 2016                                         *
  * \version 0.3                                                 *
  *                                                              *
- * \file    exceptions.hpp                                      *
+ * \file    irulepart.cpp                                       *
  *                                                              *
  ****************************************************************/
 
-/**===================*~* OWN LIBRARIES *~*===================**/
-#include "fuzzy.hpp"
+/**===================*~* CLASS DEFINITION *~*===================**/
+#include "irulepart.hpp"
 
-namespace fuzzy
-{
-namespace exceptions
-{
+using namespace fuzzy::knowledgeModule;
 
-/**===================================== NAMESPACE CLASSES =====================================**/
-class BadInstanceException;
-class DuplicatedItemException;
-template<class T>
-class NonExistentElementException;
+/**===================================== CONSTRUCTORS =====================================**/
+IRulePart::IRulePart()
+{
 
 }
-}
 
-#endif // EXCEPTIONS
+/**===================================== DESTRUCTOR =====================================**/
+IRulePart:: ~IRulePart()
+{
+
+}
 
