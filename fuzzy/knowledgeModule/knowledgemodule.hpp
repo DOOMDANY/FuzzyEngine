@@ -16,8 +16,8 @@
  ****************************************************************/
 
 /**===================*~* OWN LIBRARIES *~*===================**/
-#include "fuzzy.hpp"
-#include "memberfunctions.hpp"
+#include "fuzzy/fuzzy.hpp"
+#include "fuzzy/knowledgeModule/memberFunctions/memberfunctions.hpp"
 
 namespace fuzzy
 {

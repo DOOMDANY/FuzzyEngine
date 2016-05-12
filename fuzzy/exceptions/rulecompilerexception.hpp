@@ -1,17 +1,17 @@
-#ifndef MFEXCEPTION_HPP_INCLUDED
-#define MFEXCEPTION_HPP_INCLUDED
+#ifndef RULECOMPILEREXCEPTION_HPP
+#define RULECOMPILEREXCEPTION_HPP
 
 /*! *************************************************************
  *                                                              *
  * \author  Daniel Alejandro Plascencia Ruiz.                   *
- *          Guadalajara, Jalisco, México.                       *
+ *          Guadalajara, Jalisco, MÃ©xico.                       *
  *          dapr.service@gmail.com                              *
  *          Tel. (33) 3812 5330                                 *
  *          Cel. +52 1 33 1074 1591                             *
- * \date    March, 2016                                         *
+ * \date    May, 2016                                           *
  * \version 0.3                                                 *
  *                                                              *
- * \file    mfexception.hpp                                     *
+ * \file    rulecompilerexception.hpp                           *
  *                                                              *
  ****************************************************************/
 
@@ -20,46 +20,43 @@
 #include <string>
 
 /**===================*~* OWN LIBRARIES *~*===================**/
-#include "fuzzy/knowledgeModule/knowledgemodule.hpp"
+#include "exceptions.hpp"
 
 namespace fuzzy
 {
-namespace knowledgeModule
-{
-namespace memberFunctions
+namespace exceptions
 {
 
-class MFException : public std::exception
+class RuleCompilerException : public std::exception
 {
 public:
 /**===================================== PUBLIC MEMBERS =====================================**/
     enum StateCodes
     {
-        BAD_PARAMS,
-        INVALID_EXPRESSION,
-        INVALID_MF,
-        INVALID_NAME,
-        NULL_PROPRIETARY,
-        OUT_OF_RANGE,
-        UNKNOWN
+        UNKNOWN_MF,
+        UNKNOWN_LV,
+        INVALID_OPERATOR,
+        UNEXPECTED_SYMBOL,
+        UNKNOWN_ERROR
     };
 
 /**===================================== CONSTRUCTORS =====================================**/
-    MFException();
-    MFException(const std::string &arg);
-    MFException(StateCodes code);
+    RuleCompilerException(const std::string &message);
+    RuleCompilerException(StateCodes state, const std::string &compilerMessage);
 
 /**===================================== DESTRUCTOR =====================================**/
-    virtual ~MFException();
+    virtual ~RuleCompilerException();
 
 /**===================================== PUBLIC MEMBER FUNCTIONS =====================================**/
     StateCodes stateCode() const;
+    const char *compilerMessage() const;
     virtual const char *what() const throw();
 
 protected:
-/**===================================== PROTECTED MEMBER VARIABLES =====================================**/
+/**===================================== PUBLIC MEMBER VARIABLES =====================================**/
     StateCodes _code;
     std::string _msg;
+    std::string _compilerMsg;
 
 /**===================================== PROTECTED MEMBER FUNCTIONS =====================================**/
     void BuildMessage();
@@ -68,6 +65,5 @@ protected:
 
 }
 }
-}
 
-#endif // MFEXCEPTION_HPP_INCLUDED
+#endif // RULECOMPILEREXCEPTION_HPP

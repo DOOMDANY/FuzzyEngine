@@ -3,23 +3,7 @@ CONFIG += console c++11
 CONFIG -= app_bundle
 CONFIG -= qt
 
-DEPENDPATH +=   "fuzzy" \
-                "fuzzy/exceptions" \
-                "fuzzy/inferenceModule" \
-                "fuzzy/knowledgeModule" \
-                "fuzzy/knowledgeModule/memberFunctions" \
-                "fuzzy/memoryModule" \
-                "util" \
-                "linkedContainers"
-
-INCLUDEPATH +=  "fuzzy" \
-                "fuzzy/exceptions" \
-                "fuzzy/inferenceModule" \
-                "fuzzy/knowledgeModule" \
-                "fuzzy/knowledgeModule/memberFunctions" \
-                "fuzzy/memoryModule" \
-                "util" \
-                "linkedContainers"
+TARGET = FuzzyEngine
 
 SOURCES += main.cpp \
     fuzzy/fuzzyengine.cpp \
@@ -41,7 +25,9 @@ SOURCES += main.cpp \
     fuzzy/knowledgeModule/rule.cpp \
     fuzzy/exceptions/badinstanceexception.cpp \
     util/stringtokenizer.cpp \
-    util/util.cpp
+    util/util.cpp \
+    fuzzy/exceptions/rulecompilerexception.cpp \
+    fuzzy/memoryModule/workmemory.cpp
 
 HEADERS += \
     fuzzy/fuzzyengine.hpp \
@@ -70,6 +56,9 @@ HEADERS += \
     linkedContainers/lstack.hpp \
     fuzzy/exceptions/badinstanceexception.hpp \
     util/stringtokenizer.hpp \
-    util/util.hpp
+    util/util.hpp \
+    fuzzy/exceptions/rulecompilerexception.hpp \
+    fuzzy/memoryModule/memorymodule.hpp \
+    fuzzy/memoryModule/workmemory.hpp
 
-
+VERSION = 0.3

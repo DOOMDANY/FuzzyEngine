@@ -21,7 +21,7 @@
 /**===================*~* OWN LIBRARIES *~*===================**/
 #include "memberfunctions.hpp"
 #include "imemberfunction.hpp"
-#include "irulepart.hpp"
+#include "fuzzy/knowledgeModule/irulepart.hpp"
 
 namespace fuzzy
 {

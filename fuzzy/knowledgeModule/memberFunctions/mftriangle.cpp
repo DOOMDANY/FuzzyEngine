@@ -17,7 +17,7 @@
 
 /**===================*~* OWN LIBRARIES *~*===================**/
 #include "mfexception.hpp"
-#include "linguisticvariable.hpp"
+#include "fuzzy/knowledgeModule/linguisticvariable.hpp"
 
 using namespace std;
 using namespace fuzzy;

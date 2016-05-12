@@ -28,7 +28,7 @@ namespace exceptions
 {
 
 template<class T>
-class NonExistentElementException
+class NonExistentElementException : public std::exception
 {
 public:
 /**===================================== CONSTRUCTORS =====================================**/

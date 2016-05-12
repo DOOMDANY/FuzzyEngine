@@ -16,10 +16,10 @@
 #include "linguisticvariable.hpp"
 
 /**===================*~* OWN CLASSES  *~*===================**/
-#include "membershipfunction.hpp"
-#include "mfexception.hpp"
-#include "duplicateditemexception.hpp"
-#include "nonexistentelementexception.hpp"
+#include "fuzzy/knowledgeModule/memberFunctions/membershipfunction.hpp"
+#include "fuzzy/knowledgeModule/memberFunctions/mfexception.hpp"
+#include "fuzzy/exceptions/duplicateditemexception.hpp"
+#include "fuzzy/exceptions/nonexistentelementexception.hpp"
 
 using namespace std;
 using namespace fuzzy;

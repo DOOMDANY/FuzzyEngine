@@ -20,9 +20,9 @@
 
 /**===================*~* OWN CLASSES *~*===================**/
 #include "rule.hpp"
-#include "badinstanceexception.hpp"
-#include "duplicateditemexception.hpp"
-#include "nonexistentelementexception.hpp"
+#include "fuzzy/exceptions/badinstanceexception.hpp"
+#include "fuzzy/exceptions/duplicateditemexception.hpp"
+#include "fuzzy/exceptions/nonexistentelementexception.hpp"
 
 using namespace std;
 using namespace fuzzy;
@@ -56,23 +56,14 @@ const string &KnowledgeBase::name() const
 
 /**===================================== PUBLIC MEMBER FUNCTIONS =====================================**/
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Rules Management
-bool KnowledgeBase::createRule(const string &ruleStr)
+void KnowledgeBase::createRule(const string &ruleStr)
 {
-    try
+    if(_rules.empty())
     {
-        if(_rules.empty())
-        {
-            _rules.insert(pair<tsize, Rule>(1u, Rule(ruleStr, *this)));
-        }
-        else
-            _rules.insert(pair<tsize, Rule>(_rules.crbegin()->first + 1u, Rule(ruleStr, *this)));
+        _rules.insert(pair<tsize, Rule>(1u, Rule(ruleStr, *this)));
     }
-    catch(...)
-    {
-        return false;
-    }
-
-    return true;
+    else
+        _rules.insert(pair<tsize, Rule>(_rules.crbegin()->first + 1u, Rule(ruleStr, *this)));
 }
 
 //this method can throws: fuzzy::exceptions::NonExistentElementException<tsize>
@@ -92,21 +83,28 @@ tsize KnowledgeBase::ruleCount() const
     return _rules.size();
 }
 
-bool KnowledgeBase::replaceRule(tsize idRule, const string &ruleStr)
+vector<tsize> KnowledgeBase::ruleIds() const
+{
+    vector<tsize> ids;
+
+    ids.reserve(_rules.size());
+    for(map<tsize, Rule>::const_iterator it = _rules.cbegin(); it != _rules.end(); it++)
+    {
+        ids.push_back(it->first);
+    }
+
+    return ids;
+}
+
+void KnowledgeBase::replaceRule(tsize idRule, const string &ruleStr)
 {
     map<tsize, Rule>::iterator it;
-    bool success = false;
 
     it = _rules.find(idRule);
     if(it != _rules.end())
-        try
-        {
-            it->second = Rule(ruleStr, *this);
-            success = true;
-        }
-        catch(...){}
-
-    return success;
+    {
+        it->second = Rule(ruleStr, *this);
+    }
 }
 
 void KnowledgeBase::removeRule(tsize idRule)

@@ -18,6 +18,7 @@
 /**===================*~* STL LIBRARIES *~*===================**/
 #include <map>
 #include <string>
+#include <vector>
 
 /**===================*~* OWN LIBRARIES *~*===================**/
 #include "knowledgemodule.hpp"
@@ -44,11 +45,14 @@ public:
 
 /**===================================== PUBLIC MEMBER FUNCTIONS =====================================**/
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Rules Management
-    bool createRule(const std::string &ruleStr);
+    //this method can throws: fuzzy::exceptions::RuleCompilerException
+    void createRule(const std::string &ruleStr);
     //this method can throws: fuzzy::exceptions::NonExistentElementException<tsize>
     const Rule &rule(tsize idRule) const;
     tsize ruleCount() const;
-    bool replaceRule(tsize idRule, const std::string &ruleStr);
+    std::vector<tsize> ruleIds() const;
+    //this method can throws: fuzzy::exceptions::RuleCompilerException
+    void replaceRule(tsize idRule, const std::string &ruleStr);
     void removeRule(tsize idRule);
 
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Linguistic Variables Management

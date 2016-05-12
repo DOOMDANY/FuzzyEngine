@@ -16,8 +16,8 @@
 #include "logicaloperator.hpp"
 
 /**===================*~* CLASS DEFINITION *~*===================**/
-#include "util.hpp"
-#include "badinstanceexception.hpp"
+#include "util/util.hpp"
+#include "fuzzy/exceptions/badinstanceexception.hpp"
 
 using namespace std;
 using namespace fuzzy;

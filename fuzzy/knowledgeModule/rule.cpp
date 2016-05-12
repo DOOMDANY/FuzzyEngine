@@ -21,8 +21,8 @@
 
 /**===================*~* OWN CLASSES *~*===================**/
 #include "logicaloperator.hpp"
-#include "badinstanceexception.hpp"
-#include "stringtokenizer.hpp"
+#include "fuzzy/exceptions/rulecompilerexception.hpp"
+#include "util/stringtokenizer.hpp"
 #include "knowledgebase.hpp"
 
 using namespace std;
@@ -36,8 +36,15 @@ using namespace util;
 //this method can throws: fuzzy::exceptions::BadInstanceException
 Rule::Rule(const std::string &ruleStr, const KnowledgeBase &proprietary)
 {
-    if(!createRule(ruleStr, proprietary))
-        throw BadInstanceException();
+    try
+    {
+        createRule(ruleStr, proprietary);
+    }
+    catch(RuleCompilerException &rce)
+    {
+        dropRule();
+        throw rce;
+    }
 }
 
 Rule::Rule(const Rule &other)
@@ -73,12 +80,11 @@ const vector<pair<tsize, tsize> > &Rule::dependencies(bool isInput) const
 }
 
 /**===================================== PRIVATE MEMBER FUNCTIONS =====================================**/
-bool Rule::createRule(const std::string &ruleStr, const KnowledgeBase &proprietary)
+void Rule::createRule(const std::string &ruleStr, const KnowledgeBase &proprietary)
 {
     string conditionStr;
     string conclusionStr;
     StringTokenizer tokens(ruleStr);
-    bool success = false;
 
     tokens.tokenize("->");
     if(tokens.hasNext())
@@ -87,19 +93,15 @@ bool Rule::createRule(const std::string &ruleStr, const KnowledgeBase &proprieta
         if(tokens.hasNext())
         {
             conclusionStr = tokens.next();
-            if(compile(conditionStr, proprietary, _condition))
-                success = compile(conclusionStr, proprietary, _conclusion, false);
+            compile(conditionStr, proprietary, _condition);
+            compile(conclusionStr, proprietary, _conclusion, false);
         }
     }
-
-    return success;
 }
 
-bool Rule::compile(const std::string &source, const KnowledgeBase &proprietary,
+void Rule::compile(const std::string &source, const KnowledgeBase &proprietary,
                    std::vector<const IRulePart *> &postfixVector, bool isInput)
 {
-    bool success = true;
-
     string::const_iterator iterator = source.cbegin();
     stack<LogicalOperator*> operatorStack;
 
@@ -107,6 +109,7 @@ bool Rule::compile(const std::string &source, const KnowledgeBase &proprietary,
     int logOper;
 
     string temp;
+    string auxStr;
     int idLv = 0;
     int idMf = 0;
 
@@ -117,94 +120,114 @@ bool Rule::compile(const std::string &source, const KnowledgeBase &proprietary,
             logOper = LogicalOperator::toLogicalOperator(*iterator);
             if(logOper > -1)
             {
-                cout << temp << endl;
                 if(idMf < 1)
-                    idMf = proprietary.idMembershipFunction(idLv, temp, isInput);
-
-                if(idMf > 0)
                 {
-                    postfixVector.push_back(&proprietary.membershipFunction(idLv, idMf, isInput));
-                    if(isInput)
-                        _inputDependencies.push_back(pair<tsize, tsize>(idLv, idMf));
-                    else
-                        _outputDependencies.push_back(pair<tsize, tsize>(idLv, idMf));
-
-                    idLv = -1;
-                    idMf = -1;
-
-                    logicalOperator = new LogicalOperator((LogicalOperators) logOper);
-
-                    while(!operatorStack.empty())
-                        if(operatorStack.top()->priority() > logicalOperator->priority())
-                        {
-                            postfixVector.push_back(operatorStack.top());
-                            operatorStack.pop();
-                        }
+                    idMf = proprietary.idMembershipFunction(idLv, temp, isInput);
+                    if(idMf > 0)
+                    {
+                        postfixVector.push_back(&proprietary.membershipFunction(idLv, idMf, isInput));
+                        if(isInput)
+                            _inputDependencies.push_back(pair<tsize, tsize>(idLv, idMf));
                         else
-                            break;
+                            _outputDependencies.push_back(pair<tsize, tsize>(idLv, idMf));
+
+                        idLv = -1;
+                        idMf = -1;
+
+                        logicalOperator = new LogicalOperator((LogicalOperators) logOper);
+
+                        while(!operatorStack.empty())
+                        {
+                            if(operatorStack.top()->priority() > logicalOperator->priority())
+                            {
+                                postfixVector.push_back(operatorStack.top());
+                                operatorStack.pop();
+                            }
+                            else
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        throw RuleCompilerException(RuleCompilerException::UNKNOWN_MF, "indentifier: " + temp);
+                    }
+
+                    operatorStack.push(logicalOperator);
+                    temp.clear();
                 }
                 else
                 {
-                    success = false;
-                    break;
+                    throw RuleCompilerException(RuleCompilerException::UNEXPECTED_SYMBOL,
+                                                "expected: assignment operator, found: logical operator");
                 }
-
-                operatorStack.push(logicalOperator);
-                temp.clear();
             }
             else if(isAssignmentOperator(*iterator))
             {
-                cout << temp << endl;
-                if(idLv < 1)
-                    idLv = proprietary.idLinguisticVariable(temp, isInput);
-
                 if(idLv < 1)
                 {
-                    success = false;
-                    break;
+                    idLv = proprietary.idLinguisticVariable(temp, isInput);
+                    if(idLv < 1)
+                    {
+                        throw RuleCompilerException(RuleCompilerException::UNKNOWN_LV, "indentifier: " + temp);
+                    }
+                    temp.clear();
                 }
-                temp.clear();
+                else
+                {
+                    throw RuleCompilerException(RuleCompilerException::UNEXPECTED_SYMBOL,
+                                                "expected: logical operator, found: assignment operator");
+                }
             }
             else
             {
-                success = false;
-                break;
+                auxStr = "operator: ";
+                auxStr.push_back(*iterator);
+                throw RuleCompilerException(RuleCompilerException::INVALID_OPERATOR, auxStr);
             }
         }
         else
+        {
             temp.push_back(*iterator);
+        }
 
         iterator++;
     }
 
-    if(success)
+    if(idLv > 0)
     {
-        cout << temp << endl;
-        if(idMf < 1 && idLv > 0)
-            idMf = proprietary.idMembershipFunction(idLv, temp, isInput);
-
-        if(idMf > 0)
+        if(idMf < 1)
         {
-            postfixVector.push_back(&proprietary.membershipFunction(idLv, idMf, isInput));
-            if(isInput)
-                _inputDependencies.push_back(pair<tsize, tsize>(idLv, idMf));
-            else
-                _outputDependencies.push_back(pair<tsize, tsize>(idLv, idMf));
-
-            while(!operatorStack.empty())
+            idMf = proprietary.idMembershipFunction(idLv, temp, isInput);
+            if(idMf > 0)
             {
-                postfixVector.push_back(operatorStack.top());
-                operatorStack.pop();
+                postfixVector.push_back(&proprietary.membershipFunction(idLv, idMf, isInput));
+                if(isInput)
+                    _inputDependencies.push_back(pair<tsize, tsize>(idLv, idMf));
+                else
+                    _outputDependencies.push_back(pair<tsize, tsize>(idLv, idMf));
+
+                while(!operatorStack.empty())
+                {
+                    postfixVector.push_back(operatorStack.top());
+                    operatorStack.pop();
+                }
+            }
+            else
+            {
+                throw RuleCompilerException(RuleCompilerException::UNKNOWN_MF, "identifier: " + temp);
             }
         }
         else
-            success = false;
+        {
+            throw RuleCompilerException(RuleCompilerException::UNEXPECTED_SYMBOL,
+                                        "expected: Linguistic Variable, found: End of string");
+        }
     }
-
-    if(!success)
-        dropRule();
-
-    return success;
+    else
+    {
+        throw RuleCompilerException(RuleCompilerException::UNEXPECTED_SYMBOL,
+                                    "expected: Assignment operator, found: End of string");
+    }
 }
 
 void Rule::dropRule()

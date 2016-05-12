@@ -1,7 +1,8 @@
 #include <iostream>
 
-#include "fuzzyengine.hpp"
-#include "logicaloperator.hpp"
+#include "fuzzy/fuzzyengine.hpp"
+#include "fuzzy/knowledgeModule/logicaloperator.hpp"
+#include "fuzzy/exceptions/rulecompilerexception.hpp"
 
 using namespace std;
 using namespace fuzzy;
@@ -60,23 +61,38 @@ int main()
     }
 
     //cout << kb.createRule("INPUT0=MF1&INPUT1=MF2->OUTPUT0=MF0&OUTPUT2=MF1") << endl;
-    cout << (kb.createRule("INPUT0=MF0,0&INPUT1=MF1,2->OUTPUT0=MF0,0") ? "true" : "false") << endl;
-
-    const MembershipFunction *mf;
-    const LogicalOperator *lo;
-    for(unsigned int i = 0u; i < kb.rule(1).condition().size(); i++)
+    try
     {
-        mf = dynamic_cast<const MembershipFunction*>(kb.rule(1u).condition().at(i));
+        kb.createRule("INPUT0=MF0,0&INPUT1=MF1,2->OUTPUT0=MF0,0");
 
-        if(mf != NULL)
+        cout << "rule number: " << kb.ruleCount() << endl;
+        cout << "rule ids size: " << kb.ruleIds().size() << endl;
+
+        for(int i = 0; i < kb.ruleIds().size(); i++)
         {
-            cout << mf->name() << endl;
+            cout << "rule position: " << i << ", id: " << kb.ruleIds().at(i) << endl;
         }
-        else
+
+        const MembershipFunction *mf;
+        const LogicalOperator *lo;
+        for(unsigned int i = 0u; i < kb.rule(1).condition().size(); i++)
         {
-            lo = dynamic_cast<const LogicalOperator*>(kb.rule(1u).condition().at(i));
-            cout << lo->type() << endl;
+            mf = dynamic_cast<const MembershipFunction*>(kb.rule(1u).condition().at(i));
+
+            if(mf != NULL)
+            {
+                cout << mf->name() << endl;
+            }
+            else
+            {
+                lo = dynamic_cast<const LogicalOperator*>(kb.rule(1u).condition().at(i));
+                cout << lo->type() << endl;
+            }
         }
+    }
+    catch(exceptions::RuleCompilerException &rce)
+    {
+        cout << rce.what() << ", " << rce.compilerMessage() << endl;
     }
 
     return 0;

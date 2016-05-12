@@ -31,7 +31,7 @@ class Rule
 {
 public:
 /**===================================== CONSTRUCTORS =====================================**/
-    //this method can throws: fuzzy::exceptions::BadInstanceException
+    //this method can throws: fuzzy::exceptions::RuleCompilerException
     Rule(const std::string &ruleStr, const KnowledgeBase &proprietary);
     Rule(const Rule &other);
 
@@ -81,8 +81,10 @@ private:
     std::vector< std::pair<tsize, tsize> > _outputDependencies;
 
 /**===================================== PRIVATE MEMBER FUNCTIONS =====================================**/
-    bool createRule(const std::string &ruleStr, const KnowledgeBase &proprietary);
-    bool compile(const std::string &source, const KnowledgeBase &proprietary,
+    //this method can throws: fuzzy::exceptions::RuleCompilerException
+    void createRule(const std::string &ruleStr, const KnowledgeBase &proprietary);
+    //this method can throws: fuzzy::exceptions::RuleCompilerException
+    void compile(const std::string &source, const KnowledgeBase &proprietary,
                  std::vector<const IRulePart*> &postfixVector, bool isInput = true);
     void dropRule();
 

@@ -21,7 +21,7 @@
 
 /**===================*~* OWN LIBRARIES *~*===================**/
 #include "fuzzy.hpp"
-#include "knowledgebase.hpp"
+#include "fuzzy/knowledgeModule/knowledgebase.hpp"
 
 /**===================*~* FORWARD DECLARATIONS *~*===================**/
 

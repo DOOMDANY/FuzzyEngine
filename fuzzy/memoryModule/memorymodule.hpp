@@ -1,5 +1,5 @@
-#ifndef EXCEPTIONS
-#define EXCEPTIONS
+#ifndef MEMORYMODULE
+#define MEMORYMODULE
 
 /*! *************************************************************
  *                                                              *
@@ -8,10 +8,10 @@
  *          dapr.service@gmail.com                              *
  *          Tel. (33) 3812 5330                                 *
  *          Cel. +52 1 33 1074 1591                             *
- * \date    February, 2016                                      *
+ * \date    May, 2016                                           *
  * \version 0.3                                                 *
  *                                                              *
- * \file    exceptions.hpp                                      *
+ * \file    memorymodule.hpp                                    *
  *                                                              *
  ****************************************************************/
 
@@ -20,18 +20,14 @@
 
 namespace fuzzy
 {
-namespace exceptions
+namespace memoryModule
 {
 
 /**===================================== NAMESPACE CLASSES =====================================**/
-class BadInstanceException;
-class DuplicatedItemException;
-template<class T>
-class NonExistentElementException;
-class RuleCompilerException;
+class WorkMemory;
 
 }
 }
 
-#endif // EXCEPTIONS
+#endif // MEMORYMODULE
 

@@ -16,7 +16,7 @@
 #include "mftrapezoid.hpp"
 
 /**===================*~* OWN LIBRARIES *~*===================**/
-#include "linguisticvariable.hpp"
+#include "fuzzy/knowledgeModule/linguisticvariable.hpp"
 #include "mfexception.hpp"
 
 using namespace std;

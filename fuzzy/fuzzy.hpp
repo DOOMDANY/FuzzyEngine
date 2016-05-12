@@ -16,7 +16,8 @@
  ****************************************************************/
 
 /**===================*~* OWN LIBRARIES *~*===================**/
-#include "knowledgemodule.hpp"
+#include "knowledgeModule/knowledgemodule.hpp"
+#include "memoryModule/memorymodule.hpp"
 
 namespace fuzzy
 {

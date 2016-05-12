@@ -48,7 +48,7 @@ MFException::~MFException()
 }
 
 /**===================================== PUBLIC MEMBER FUNCTIONS =====================================**/
-MFException::StateCodes MFException::GetStateCode()
+MFException::StateCodes MFException::stateCode() const
 {
     return _code;
 }
