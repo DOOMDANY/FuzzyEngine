@@ -32,11 +32,7 @@ WorkMemory::WorkMemory()
 /**===================================== PUBLIC MEMBER FUNCTIONS =====================================**/
 bool WorkMemory::addInput(tsize idLv, double initialValue)
 {
-    pair<map<tsize, InputRegister>::iterator, bool> inserted;
-
-    inserted = _inputs.emplace(idLv, InputRegister(initialValue));
-
-    return !inserted.second;
+    return _inputs.emplace(idLv, InputRegister(initialValue)).second;
 }
 
 double WorkMemory::inputValue(tsize idLv) const
@@ -44,7 +40,6 @@ double WorkMemory::inputValue(tsize idLv) const
     map<tsize, InputRegister>::const_iterator iter;
 
     iter = _inputs.find(idLv);
-
     if(iter == _inputs.cend())
         throw NonExistentElementException<tsize>(idLv);
 
@@ -94,17 +89,14 @@ void WorkMemory::removeInput(tsize idLv)
 bool WorkMemory::addFunction(tsize idLv, tsize idMf, double initialValue)
 {
     map<tsize, InputRegister>::iterator iter;
-    pair<map<tsize, double>::iterator, bool> inserted;
-    bool success = false;
 
     iter = _inputs.find(idLv);
     if(iter != _inputs.end())
     {
-        inserted = iter->second.functions.emplace(idMf, initialValue);
-        success = !inserted.second;
+        return iter->second.functions.emplace(idMf, initialValue).second;
     }
 
-    return success;
+    return false;
 }
 
 double WorkMemory::functionValue(tsize idLv, tsize idMf) const
@@ -200,64 +192,118 @@ void WorkMemory::removeFunction(tsize idLv, tsize idMf)
     }
 }
 
-void WorkMemory::addRule(tsize idRule, const knowledgeModule::Rule &rule, double initialValue)
+bool WorkMemory::addRule(tsize idRule, const knowledgeModule::Rule &rule, double initialValue)
 {
-
+    return _rules.emplace(idRule, RuleRegister(&rule, initialValue)).second;
 }
 
 double WorkMemory::ruleValue(tsize idRule) const
 {
+    map<tsize, RuleRegister>::const_iterator iter;
 
+    iter = _rules.find(idRule);
+
+    if(iter == _rules.cend())
+        throw NonExistentElementException<tsize>(idRule);
+
+    return iter->second.value;
+}
+
+bool WorkMemory::existsRule(tsize idRule) const
+{
+    return _rules.find(idRule) != _rules.cend();
 }
 
 tsize WorkMemory::ruleCount() const
 {
-
+    return _rules.size();
 }
 
 vector<tsize> WorkMemory::ruleIds() const
 {
+    vector<tsize> ids;
 
+    ids.reserve(_rules.size());
+    for(map<tsize, RuleRegister>::const_iterator it = _rules.cbegin(); it != _rules.cend(); it++)
+    {
+        ids.push_back(it->first);
+    }
+
+    return ids;
 }
 
 void WorkMemory::setRuleValue(tsize idRule, double value)
 {
+    map<tsize, RuleRegister>::iterator iter;
 
+    iter = _rules.find(idRule);
+
+    if(iter == _rules.end())
+        throw NonExistentElementException<tsize>(idRule);
+
+    iter->second.value = value;
 }
 
 void WorkMemory::removeRule(tsize idRule)
 {
-
+    _rules.erase(idRule);
 }
 
-void WorkMemory::addOutput(tsize idLv, double defaultValue)
+bool WorkMemory::addOutput(tsize idLv, double initialValue)
 {
-
+    return _outputs.emplace(idLv, initialValue).second;
 }
 
 double WorkMemory::outputValue(tsize idLv) const
 {
+    map<tsize, double>::const_iterator iter;
 
+    iter = _outputs.find(idLv);
+
+    if(iter == _outputs.cend())
+        throw NonExistentElementException<tsize>(idLv);
+
+    return iter->second;
+}
+
+bool WorkMemory::existsOutput(tsize idLv) const
+{
+    return _outputs.find(idLv) != _outputs.cend();
 }
 
 tsize WorkMemory::outputCount() const
 {
-
+    return _outputs.size();
 }
 
 vector<tsize> WorkMemory::outputIds() const
 {
+    vector<tsize> ids;
 
+    ids.reserve(_outputs.size());
+    for(map<tsize, double>::const_iterator it = _outputs.cbegin(); it != _outputs.cend(); it++)
+    {
+        ids.push_back(it->first);
+    }
+
+    return ids;
 }
 
 void WorkMemory::setOutputValue(tsize idLv, double value)
 {
+    map<tsize, double>::iterator iter;
 
+    iter = _outputs.find(idLv);
+
+    if(iter == _outputs.end())
+        throw NonExistentElementException<tsize>(idLv);
+
+    iter->second = value;
 }
 
 void WorkMemory::removeOutput(tsize idLv)
 {
-
+    _outputs.erase(idLv);
 }
 
 

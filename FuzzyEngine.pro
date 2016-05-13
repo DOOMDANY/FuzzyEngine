@@ -52,8 +52,6 @@ HEADERS += \
     fuzzy/knowledgeModule/irulepart.hpp \
     fuzzy/knowledgeModule/logicaloperator.hpp \
     fuzzy/knowledgeModule/rule.hpp \
-    linkedContainers/linkedcontainers.hpp \
-    linkedContainers/lstack.hpp \
     fuzzy/exceptions/badinstanceexception.hpp \
     util/stringtokenizer.hpp \
     util/util.hpp \
