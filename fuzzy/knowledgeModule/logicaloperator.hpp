@@ -32,21 +32,25 @@ class LogicalOperator : public IRulePart
 public:
 /**===================================== PUBLIC STATIC FUNCTIONS =====================================**/
     static double average(const double *list, int n);
+    static double average(double a, double b);
     static double complement(double a);
     static double maximum(double a, double b);
     static double minimum(double a, double b);
     static double absoluteDifference(double a, double b);
+
+    static double unaryOperation(double a, LogicalFunctions function);
+    static double binaryOperation(double a, double b, LogicalFunctions function);
 
     static int toLogicalOperator(char c);
     static int toLogicalOperator(const std::string &str);
     static int priority(LogicalOperators logicalOperator);
 
 /**===================================== CONSTRUCTORS =====================================**/
-    //it can throws fuzzy::exceptions::BadInstanceException
+    //it can throws fuzzy::exceptions::CommonException(DUPLICATED_ITEM)
     LogicalOperator(LogicalOperators type = AND);
 
 /**===================================== SETTER & GETTER =====================================**/
-    //it can throws fuzzy::exceptions::BadInstanceException
+    //it can throws fuzzy::exceptions::CommonException(BAD_INSTANCE)
     void setType(LogicalOperators type);
     LogicalOperators type() const;
 

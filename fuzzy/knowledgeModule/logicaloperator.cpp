@@ -17,7 +17,7 @@
 
 /**===================*~* CLASS DEFINITION *~*===================**/
 #include "util/util.hpp"
-#include "fuzzy/exceptions/badinstanceexception.hpp"
+#include "fuzzy/exceptions/commonexception.hpp"
 
 using namespace std;
 using namespace fuzzy;
@@ -35,6 +35,11 @@ double LogicalOperator::average(const double *list, int n)
     result /= n;
 
     return result;
+}
+
+double LogicalOperator::average(double a, double b)
+{
+    return (a + b) / 2.0;
 }
 
 double LogicalOperator::complement(double a)
@@ -57,6 +62,39 @@ double LogicalOperator::absoluteDifference(double a, double b)
     if(a < b)
         return b - a;
     return a - b;
+}
+
+double LogicalOperator::unaryOperation(double a, LogicalFunctions function)
+{
+    switch(function)
+    {
+        case COMPLEMENT:
+            return complement(a);
+            break;
+        default:
+            return 0.0;
+    }
+}
+
+double LogicalOperator::binaryOperation(double a, double b, LogicalFunctions function)
+{
+    switch(function)
+    {
+        case AVERAGE:
+            return average(a, b);
+            break;
+        case MINIMUM:
+            return minimum(a, b);
+            break;
+        case MAXIMUM:
+            return maximum(a, b);
+            break;
+        case DIFFERENCE:
+            return absoluteDifference(a, b);
+            break;
+        default:
+            return 0.0;
+    }
 }
 
 int LogicalOperator::toLogicalOperator(char c)
@@ -109,7 +147,7 @@ LogicalOperator::LogicalOperator(LogicalOperators type) :
     _type(type)
 {
     if(type < AND || type > XOR)
-        throw BadInstanceException();
+        throw CommonException(CommonException::DUPLICATED_ITEM);
 }
 
 /**===================================== SETTER & GETTER =====================================**/
@@ -133,7 +171,7 @@ int LogicalOperator::priority() const
 void LogicalOperator::setType(LogicalOperators type)
 {
     if(type < AND || type > XOR)
-        throw BadInstanceException();
+        throw CommonException(CommonException::BAD_INSTANCE);
 
     _type = type;
 }

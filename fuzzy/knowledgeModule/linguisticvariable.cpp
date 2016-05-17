@@ -18,8 +18,7 @@
 /**===================*~* OWN CLASSES  *~*===================**/
 #include "fuzzy/knowledgeModule/memberFunctions/membershipfunction.hpp"
 #include "fuzzy/knowledgeModule/memberFunctions/mfexception.hpp"
-#include "fuzzy/exceptions/duplicateditemexception.hpp"
-#include "fuzzy/exceptions/nonexistentelementexception.hpp"
+#include "fuzzy/exceptions/commonexception.hpp"
 
 using namespace std;
 using namespace fuzzy;
@@ -97,7 +96,7 @@ void LinguisticVariable::createMembershipFunction(const string &functionName, co
     else
     {
         if(idMembershipFunction(functionName) > 0)
-            throw(DuplicatedItemException("The new Member Function name already exists"));
+            throw(CommonException(CommonException::DUPLICATED_ITEM));
         else
         {
             _memberFunctions.insert(pair<tsize, MembershipFunction>
@@ -115,7 +114,7 @@ void LinguisticVariable::createMembershipFunction(const string &functionName, co
     else
     {
         if(idMembershipFunction(functionName) > 0)
-            throw(DuplicatedItemException("The new Member Function name already exists"));
+            throw(CommonException(CommonException::DUPLICATED_ITEM));
         else
             _memberFunctions.insert(pair<tsize, MembershipFunction>
                                     (_memberFunctions.crbegin()->first + 1u,
@@ -134,9 +133,11 @@ const MembershipFunction &LinguisticVariable::membershipFunction(tsize id) const
 
     it = _memberFunctions.find(id);
     if(it == _memberFunctions.cend())
-        throw NonExistentElementException<tsize>(id);
-    else
-        return it->second;
+    {
+        throw CommonException(CommonException::NON_EXISTENT_ELEMENT);
+    }
+
+    return it->second;
 }
 
 MembershipFunction &LinguisticVariable::membershipFunction(tsize id)
@@ -145,9 +146,16 @@ MembershipFunction &LinguisticVariable::membershipFunction(tsize id)
 
     it = _memberFunctions.find(id);
     if(it == _memberFunctions.end())
-        throw NonExistentElementException<tsize>(id);
-    else
-        return it->second;
+    {
+        throw CommonException(CommonException::NON_EXISTENT_ELEMENT);
+    }
+
+    return it->second;
+}
+
+const map<tsize, MembershipFunction> &LinguisticVariable::membershipFunctions() const
+{
+    return _memberFunctions;
 }
 
 int LinguisticVariable::idMembershipFunction(const string &name) const
@@ -166,9 +174,11 @@ void LinguisticVariable::replaceMembershipFunction(const MembershipFunction &mem
 
     it = _memberFunctions.find(id);
     if(it == _memberFunctions.end())
-        throw NonExistentElementException<tsize>(id);
-    else
-        it->second = membershipFunction;
+    {
+        throw CommonException(CommonException::NON_EXISTENT_ELEMENT);
+    }
+
+    it->second = membershipFunction;
 }
 
 void LinguisticVariable::removeMembershipFunction(tsize id)

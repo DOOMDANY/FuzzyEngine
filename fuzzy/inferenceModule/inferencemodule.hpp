@@ -1,5 +1,6 @@
-#ifndef EXCEPTIONS
-#define EXCEPTIONS
+#ifndef INFERENCEMODULE_HPP
+#define INFERENCEMODULE_HPP
+
 
 /*! *************************************************************
  *                                                              *
@@ -8,10 +9,10 @@
  *          dapr.service@gmail.com                              *
  *          Tel. (33) 3812 5330                                 *
  *          Cel. +52 1 33 1074 1591                             *
- * \date    February, 2016                                      *
+ * \date    May, 2016                                           *
  * \version 0.3                                                 *
  *                                                              *
- * \file    exceptions.hpp                                      *
+ * \file    inferencemodule.hpp                                 *
  *                                                              *
  ****************************************************************/
 
@@ -20,15 +21,45 @@
 
 namespace fuzzy
 {
-namespace exceptions
+namespace inferenceModule
 {
 
+/**===================================== NAMESPACE MEMBERS =====================================**/
+enum DefuzzyTypes
+{
+    SUGENO,
+    MAMDANI,
+    TSUKAMOTO
+};
+
+enum DefuzzyFunctions
+{
+    CENTROID,
+    AREA_CENTER,
+    WEIGHTED_AVERAGE,
+    FIRST_MAX,
+    SUGENO_FUNC,
+    TSUKAMOTO_FUNC
+};
+
 /**===================================== NAMESPACE CLASSES =====================================**/
-class RuleCompilerException;
-class CommonException;
+class InferenceEngine;
 
 }
 }
 
-#endif // EXCEPTIONS
+#endif // INFERENCEMODULE_HPP
+
+
+
+
+
+
+
+
+
+
+
+
+
 

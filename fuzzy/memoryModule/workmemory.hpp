@@ -21,7 +21,7 @@
 
 /**===================*~* OWN LIBRARIES *~*===================**/
 #include "memorymodule.hpp"
-#include "fuzzy/knowledgeModule/rule.hpp"
+#include "fuzzy/knowledgeModule/knowledgemodule.hpp"
 
 namespace fuzzy
 {
@@ -35,56 +35,58 @@ public:
     WorkMemory();
 
 /**===================================== PUBLIC MEMBER FUNCTIONS =====================================**/
-    bool addInput(tsize idLv, double initialValue = 0.0);
-    //this method can throws: fuzzy::exceptions::NonExistentElementException<tsize>
-    double inputValue(tsize idLv) const;
-    bool existsInput(tsize idLv) const;
+    bool addInput(const knowledgeModule::LinguisticVariable *lv, double initialValue = 0.0);
+    //this method can throws: fuzzy::exceptions::CommonException(NON_EXISTENT_ELEMENT)
+    double inputValue(const knowledgeModule::LinguisticVariable *lv) const;
+    bool existsInput(const knowledgeModule::LinguisticVariable *lv) const;
     tsize inputCount() const;
-    std::vector<tsize> inputIds() const;
-    //this method can throws: fuzzy::exceptions::NonExistentElementException<tsize>
-    void setInputValue(tsize idLv, double value);
-    void removeInput(tsize idLv);
+    //this method can throws: fuzzy::exceptions::CommonException(NON_EXISTENT_ELEMENT)
+    void setInputValue(const knowledgeModule::LinguisticVariable *lv, double value);
+    void removeInput(const knowledgeModule::LinguisticVariable *lv);
 
-    bool addFunction(tsize idLv, tsize idMf, double initialValue = 0.0);
-    //this method can throws: fuzzy::exceptions::NonExistentElementException<tsize>
-    //                        fuzzy::exceptions::NonExistentElementException< pair<tsize, tsize> >
-    double functionValue(tsize idLv, tsize idMf) const;
-    bool existsFunction(tsize idLv, tsize idMf) const;
-    int functionCount(tsize idLv) const;
-    std::vector<tsize> functionIds(tsize idLv) const;
-    //this method can throws: fuzzy::exceptions::NonExistentElementException<tsize>
-    //                        fuzzy::exceptions::NonExistentElementException< pair<tsize, tsize> >
-    void setFunctionValue(tsize idLv, tsize idMf, double value);
-    void removeFunction(tsize idLv, tsize idMf);
+    bool addFunction(const knowledgeModule::LinguisticVariable *lv,
+                     const knowledgeModule::memberFunctions::MembershipFunction *mf,
+                     double initialValue = 0.0);
+    //this method can throws: fuzzy::exceptions::CommonException(NON_EXISTENT_ELEMENT)
+    double functionValue(const knowledgeModule::LinguisticVariable *lv,
+                         const knowledgeModule::memberFunctions::MembershipFunction *mf) const;
+    bool existsFunction(const knowledgeModule::LinguisticVariable *lv,
+                        const knowledgeModule::memberFunctions::MembershipFunction *mf) const;
+    int functionCount(const knowledgeModule::LinguisticVariable *lv) const;
+    //this method can throws: fuzzy::exceptions::CommonException(NON_EXISTENT_ELEMENT)
+    void setFunctionValue(const knowledgeModule::LinguisticVariable *lv,
+                          const knowledgeModule::memberFunctions::MembershipFunction *mf, double value);
+    void removeFunction(const knowledgeModule::LinguisticVariable *lv,
+                        const knowledgeModule::memberFunctions::MembershipFunction *mf);
 
-    bool addRule(tsize idRule, const knowledgeModule::Rule &rule, double initialValue = 0.0);
-    //this method can throws: fuzzy::exceptions::NonExistentElementException<tsize>
-    double ruleValue(tsize idRule) const;
-    bool existsRule(tsize idRule) const;
+    bool addRule(const knowledgeModule::Rule *rule, double initialValue = 0.0);
+    //this method can throws: fuzzy::exceptions::CommonException(NON_EXISTENT_ELEMENT)
+    double ruleValue(const knowledgeModule::Rule *rule) const;
+    bool existsRule(const knowledgeModule::Rule *rule) const;
     tsize ruleCount() const;
-    std::vector<tsize> ruleIds() const;
-    //this method can throws: fuzzy::exceptions::NonExistentElementException<tsize>
-    void setRuleValue(tsize idRule, double value);
-    void removeRule(tsize idRule);
+    //this method can throws: fuzzy::exceptions::CommonException(NON_EXISTENT_ELEMENT)
+    void setRuleValue(const knowledgeModule::Rule *rule, double value);
+    void removeRule(const knowledgeModule::Rule *rule);
 
-    bool addOutput(tsize idLv, double initialValue = 0.0);
-    //this method can throws: fuzzy::exceptions::NonExistentElementException<tsize>
-    double outputValue(tsize idLv) const;
-    bool existsOutput(tsize idLv) const;
+    bool addOutput(const knowledgeModule::LinguisticVariable *lv, double initialValue = 0.0);
+    //this method can throws: fuzzy::exceptions::CommonException(NON_EXISTENT_ELEMENT)
+    double outputValue(const knowledgeModule::LinguisticVariable *lv) const;
+    bool existsOutput(const knowledgeModule::LinguisticVariable *lv) const;
     tsize outputCount() const;
-    std::vector<tsize> outputIds() const;
-    //this method can throws: fuzzy::exceptions::NonExistentElementException<tsize>
-    void setOutputValue(tsize idLv, double value);
-    void removeOutput(tsize idLv);
+    //this method can throws: fuzzy::exceptions::CommonException(NON_EXISTENT_ELEMENT)
+    void setOutputValue(const knowledgeModule::LinguisticVariable *lv, double value);
+    void removeOutput(const knowledgeModule::LinguisticVariable *lv);
 
 private:
 /**===================================== PRIVATE MEMBERS =====================================**/
     struct InputRegister
     {
         double value;
-        std::map<tsize, double> functions;
+        std::map<const knowledgeModule::memberFunctions::MembershipFunction*, double> functions;
 
-        InputRegister(double value, std::map<tsize, double> functions = std::map<tsize, double>()) :
+        InputRegister(double value,
+                      std::map<const knowledgeModule::memberFunctions::MembershipFunction*, double> functions =
+                std::map<const knowledgeModule::memberFunctions::MembershipFunction*, double>()) :
             value(value),
             functions(functions)
         {
@@ -92,23 +94,10 @@ private:
         }
     };
 
-    struct RuleRegister
-    {
-        const knowledgeModule::Rule *rule;
-        double value;
-
-        RuleRegister(const knowledgeModule::Rule *rule, double value = 0.0) :
-            rule(rule),
-            value(value)
-        {
-
-        }
-    };
-
 /**===================================== PRIVATE MEMBER VARIABLES =====================================**/
-    std::map<tsize, InputRegister> _inputs;
-    std::map<tsize, RuleRegister> _rules;
-    std::map<tsize, double> _outputs;
+    std::map<const knowledgeModule::LinguisticVariable*, InputRegister> _inputs;
+    std::map<const knowledgeModule::Rule*, double> _rules;
+    std::map<const knowledgeModule::LinguisticVariable*, double> _outputs;
 
 };
 

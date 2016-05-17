@@ -47,8 +47,9 @@ public:
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Rules Management
     //this method can throws: fuzzy::exceptions::RuleCompilerException
     void createRule(const std::string &ruleStr);
-    //this method can throws: fuzzy::exceptions::NonExistentElementException<tsize>
+    //this method can throws: fuzzy::exceptions::CommonException(CommonException::NON_EXISTENT_ELEMENT)
     const Rule &rule(tsize idRule) const;
+    const std::map<tsize, Rule> &rules() const;
     tsize ruleCount() const;
     std::vector<tsize> ruleIds() const;
     //this method can throws: fuzzy::exceptions::RuleCompilerException
@@ -56,9 +57,11 @@ public:
     void removeRule(tsize idRule);
 
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Linguistic Variables Management
+    //this method can throws: fuzzy::exceptions::CommonException(DUPLICATED_ITEM)
     bool createLinguisticVariable(const std::string &name, double lowerLimit, double upperLimit, bool isInput = true);
-    //this method can throws: fuzzy::exceptions::NonExistentElementException<tsize>
+    //this method can throws: fuzzy::exceptions::CommonException(CommonException::NON_EXISTENT_ELEMENT)
     const LinguisticVariable &linguisticVariable(tsize idLv, bool isInput = true) const;
+    const std::map<tsize, LinguisticVariable> &linguisticVariables(bool isInput = true) const;
     int idLinguisticVariable(const std::string &name, bool isInput = true) const;
     tsize linguisticVariableCount(bool isInput = true) const;
     bool renameLinguisticVariable(const std::string &name, tsize idLv, bool isInput = true);
@@ -70,7 +73,7 @@ public:
                                   tsize idLv, bool isInput = true);
     bool createMembershipFunction(const std::string &name, const std::string &expression, tsize idLv,
                                   bool isInput = true);
-    //this method can throws: fuzzy::exceptions::NonExistentElementException< vector<tsize> >
+    //this method can throws: fuzzy::exceptions::CommonException(CommonException::NON_EXISTENT_ELEMENT)
     const memberFunctions::MembershipFunction &membershipFunction(tsize idLv, tsize idMf, bool isInput = true) const;
     int idMembershipFunction(tsize idLv, const std::string &name, bool isInput = true) const;
     //this method can throws: std::out_of_range

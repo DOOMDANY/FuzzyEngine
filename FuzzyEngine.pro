@@ -13,7 +13,6 @@ SOURCES += main.cpp \
     fuzzy/knowledgeModule/memberFunctions/mfbell.cpp \
     fuzzy/knowledgeModule/memberFunctions/mfexception.cpp \
     fuzzy/knowledgeModule/linguisticvariable.cpp \
-    fuzzy/exceptions/duplicateditemexception.cpp \
     fuzzy/knowledgeModule/memberFunctions/mfcustom.cpp \
     fuzzy/knowledgeModule/memberFunctions/mfgaussian.cpp \
     fuzzy/knowledgeModule/memberFunctions/mfsigmoid.cpp \
@@ -23,11 +22,13 @@ SOURCES += main.cpp \
     fuzzy/knowledgeModule/irulepart.cpp \
     fuzzy/knowledgeModule/logicaloperator.cpp \
     fuzzy/knowledgeModule/rule.cpp \
-    fuzzy/exceptions/badinstanceexception.cpp \
     util/stringtokenizer.cpp \
     util/util.cpp \
     fuzzy/exceptions/rulecompilerexception.cpp \
-    fuzzy/memoryModule/workmemory.cpp
+    fuzzy/memoryModule/workmemory.cpp \
+    fuzzy/inferenceModule/inferenceengine.cpp \
+    fuzzy/exceptions/commonexception.cpp \
+    fuzzy/inferenceModule/sugenoengine.cpp
 
 HEADERS += \
     fuzzy/fuzzyengine.hpp \
@@ -41,8 +42,6 @@ HEADERS += \
     fuzzy/knowledgeModule/memberFunctions/mfexception.hpp \
     fuzzy/knowledgeModule/linguisticvariable.hpp \
     fuzzy/exceptions/exceptions.hpp \
-    fuzzy/exceptions/duplicateditemexception.hpp \
-    fuzzy/exceptions/nonexistentelementexception.hpp \
     fuzzy/knowledgeModule/memberFunctions/mfcustom.hpp \
     fuzzy/knowledgeModule/memberFunctions/mfgaussian.hpp \
     fuzzy/knowledgeModule/memberFunctions/mfsigmoid.hpp \
@@ -52,11 +51,14 @@ HEADERS += \
     fuzzy/knowledgeModule/irulepart.hpp \
     fuzzy/knowledgeModule/logicaloperator.hpp \
     fuzzy/knowledgeModule/rule.hpp \
-    fuzzy/exceptions/badinstanceexception.hpp \
     util/stringtokenizer.hpp \
     util/util.hpp \
     fuzzy/exceptions/rulecompilerexception.hpp \
     fuzzy/memoryModule/memorymodule.hpp \
-    fuzzy/memoryModule/workmemory.hpp
+    fuzzy/memoryModule/workmemory.hpp \
+    fuzzy/inferenceModule/inferencemodule.hpp \
+    fuzzy/inferenceModule/inferenceengine.hpp \
+    fuzzy/exceptions/commonexception.hpp \
+    fuzzy/inferenceModule/sugenoengine.hpp
 
 VERSION = 0.3

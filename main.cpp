@@ -68,7 +68,7 @@ int main()
         cout << "rule number: " << kb.ruleCount() << endl;
         cout << "rule ids size: " << kb.ruleIds().size() << endl;
 
-        for(int i = 0; i < kb.ruleIds().size(); i++)
+        for(tsize i = 0; i < kb.ruleIds().size(); i++)
         {
             cout << "rule position: " << i << ", id: " << kb.ruleIds().at(i) << endl;
         }

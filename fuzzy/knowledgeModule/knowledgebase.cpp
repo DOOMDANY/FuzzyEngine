@@ -20,9 +20,7 @@
 
 /**===================*~* OWN CLASSES *~*===================**/
 #include "rule.hpp"
-#include "fuzzy/exceptions/badinstanceexception.hpp"
-#include "fuzzy/exceptions/duplicateditemexception.hpp"
-#include "fuzzy/exceptions/nonexistentelementexception.hpp"
+#include "fuzzy/exceptions/commonexception.hpp"
 
 using namespace std;
 using namespace fuzzy;
@@ -66,16 +64,20 @@ void KnowledgeBase::createRule(const string &ruleStr)
         _rules.insert(pair<tsize, Rule>(_rules.crbegin()->first + 1u, Rule(ruleStr, *this)));
 }
 
-//this method can throws: fuzzy::exceptions::NonExistentElementException<tsize>
 const Rule &KnowledgeBase::rule(tsize idRule) const
 {
     map<tsize, Rule>::const_iterator it;
 
     it = _rules.find(idRule);
     if(it == _rules.cend())
-        throw NonExistentElementException<tsize>(idRule);
+        throw CommonException(CommonException::NON_EXISTENT_ELEMENT);
     else
         return it->second;
+}
+
+const map<tsize, Rule> &KnowledgeBase::rules() const
+{
+    return _rules;
 }
 
 tsize KnowledgeBase::ruleCount() const
@@ -126,7 +128,7 @@ bool KnowledgeBase::createLinguisticVariable(const string &name, double lowerLim
         else
         {
             if(idLinguisticVariable(name, isInput) >= 0)
-                throw(DuplicatedItemException("The new Linguistic Variable name already exists"));
+                throw(CommonException(CommonException::DUPLICATED_ITEM));
             else
                 variables.insert(pair<tsize, LinguisticVariable>
                                  (variables.crbegin()->first + 1u, LinguisticVariable(name, lowerLimit, upperLimit)));
@@ -137,7 +139,6 @@ bool KnowledgeBase::createLinguisticVariable(const string &name, double lowerLim
     return success;
 }
 
-//this method can throws: fuzzy::exceptions::NonExistentElementException<tsize>
 const LinguisticVariable &KnowledgeBase::linguisticVariable(tsize idLv, bool isInput) const
 {
     map<tsize, LinguisticVariable>::const_iterator it;
@@ -146,9 +147,16 @@ const LinguisticVariable &KnowledgeBase::linguisticVariable(tsize idLv, bool isI
     it = isInput ? _inputs.find(idLv) : _outputs.find(idLv);
     end = isInput ? _inputs.cend() : _outputs.cend();
     if(it == end)
-        throw NonExistentElementException<tsize>(idLv);
+        throw CommonException(CommonException::NON_EXISTENT_ELEMENT);
     else
         return it->second;
+}
+
+const map<tsize, LinguisticVariable> &KnowledgeBase::linguisticVariables(bool isInput) const
+{
+    if(isInput)
+        return _inputs;
+    return _outputs;
 }
 
 int KnowledgeBase::idLinguisticVariable(const string &name, bool isInput) const
@@ -283,7 +291,7 @@ bool KnowledgeBase::createMembershipFunction(const string &name, const string &e
     return success;
 }
 
-//this method can throws: fuzzy::exceptions::NonExistentElementException< vector<tsize> >
+//this method can throws: fuzzy::exceptions::CommonException(CommonException::NON_EXISTENT_ELEMENT)
 const MembershipFunction &KnowledgeBase::membershipFunction(tsize idLv, tsize idMf, bool isInput) const
 {
     map<tsize, LinguisticVariable>::const_iterator it;
@@ -294,17 +302,10 @@ const MembershipFunction &KnowledgeBase::membershipFunction(tsize idLv, tsize id
 
     if(it != end)
     {
-        try
-        {
-            return it->second.membershipFunction(idMf);
-        }
-        catch(NonExistentElementException<tsize> &e)
-        {
-            throw NonExistentElementException< vector<tsize> >(vector<tsize>({idLv, idMf}));
-        }
+        return it->second.membershipFunction(idMf);
     }
-    else
-        throw NonExistentElementException< vector<tsize> >(vector<tsize>({idLv, idMf}));
+
+    throw CommonException(CommonException::NON_EXISTENT_ELEMENT);
 }
 
 int KnowledgeBase::idMembershipFunction(tsize idLv, const string &name, bool isInput) const

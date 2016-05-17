@@ -84,7 +84,7 @@ void MembershipFunction::setParameters(const double *params)
     _memberFunction->setParameters(params);
 }
 
-const double *MembershipFunction::Parameters() const
+const double *MembershipFunction::parameters() const
 {
     return _memberFunction->parameters();
 }
@@ -171,7 +171,7 @@ const MembershipFunction &MembershipFunction::operator = (const MembershipFuncti
 
     _name = other._name;
     if(other.type() != CUSTOM)
-        createMemberFunction(other.type(), other.Parameters(), other.proprietary());
+        createMemberFunction(other.type(), other.parameters(), other.proprietary());
     else
         createMemberFunction(other.expression(), other.proprietary());
 

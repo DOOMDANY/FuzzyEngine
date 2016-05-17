@@ -55,21 +55,22 @@ public:
 
 /**===================================== PUBLIC MEMBER FUNCTIONS =====================================**/
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Membership Functions Management
-    //this method can throws: fuzzy::exceptions::DuplicatedItemException,
+    //this method can throws: fuzzy::exceptions::CommonException(DUPLICATED_ITEM),
     //                        fuzzy::knowledgeModule::memberFunctions::MFException
     //                        std::bad_alloc
     void createMembershipFunction(const std::string &functionName, const double *params, memberFunctions::MFType type);
-    //this method can throws: fuzzy::util::exceptions::DuplicatedItemException,
+    //this method can throws: fuzzy::util::exceptions::CommonException(DUPLICATED_ITEM),
     //                        fuzzy::knowledgeModule::memberFunctions::MFException
     //                        std::bad_alloc
     void createMembershipFunction(const std::string &functionName, const std::string &expression);
     tsize membershipFunctionCount() const;
-    //this method can throws: fuzzy::exceptions::NonExistentElementException
+    //this method can throws: fuzzy::exceptions::CommonException(CommonException::NON_EXISTENT_ELEMENT)
     const knowledgeModule::memberFunctions::MembershipFunction &membershipFunction(tsize id) const;
-    //this method can throws: fuzzy::exceptions::NonExistentElementException
+    //this method can throws: fuzzy::exceptions::CommonException(CommonException::NON_EXISTENT_ELEMENT)
     knowledgeModule::memberFunctions::MembershipFunction &membershipFunction(tsize id);
+    const std::map<tsize, memberFunctions::MembershipFunction> &membershipFunctions() const;
     int idMembershipFunction(const std::string &name) const;
-    //this method can throws: fuzzy::exceptions::NonExistentElementException
+    //this method can throws: fuzzy::exceptions::CommonException(CommonException::NON_EXISTENT_ELEMENT)
     void replaceMembershipFunction(const knowledgeModule::memberFunctions::MembershipFunction &membershipFunction,
                                    tsize id);
     void removeMembershipFunction(tsize id);

@@ -53,7 +53,7 @@ public:
 
     //this method can throws: fuzzy::knowledgeModule::memberFunctions::MFException
     void setParameters(const double *params);
-    const double *Parameters() const;
+    const double *parameters() const;
 
     //this method can throws: fuzzy::knowledgeModule::memberFunctions::MFException
     void setExpression(const std::string &expression);

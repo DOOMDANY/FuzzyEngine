@@ -16,10 +16,12 @@
 #include "workmemory.hpp"
 
 /**===================*~* OWN CLASSES *~*===================**/
-#include "fuzzy/exceptions/nonexistentelementexception.hpp"
+#include "fuzzy/exceptions/commonexception.hpp"
 
 using namespace std;
 using namespace fuzzy;
+using namespace fuzzy::knowledgeModule;
+using namespace fuzzy::knowledgeModule::memberFunctions;
 using namespace fuzzy::memoryModule;
 using namespace fuzzy::exceptions;
 
@@ -30,25 +32,25 @@ WorkMemory::WorkMemory()
 }
 
 /**===================================== PUBLIC MEMBER FUNCTIONS =====================================**/
-bool WorkMemory::addInput(tsize idLv, double initialValue)
+bool WorkMemory::addInput(const LinguisticVariable *lv, double initialValue)
 {
-    return _inputs.emplace(idLv, InputRegister(initialValue)).second;
+    return (lv == NULL) ? false : _inputs.emplace(lv, InputRegister(initialValue)).second;
 }
 
-double WorkMemory::inputValue(tsize idLv) const
+double WorkMemory::inputValue(const LinguisticVariable *lv) const
 {
-    map<tsize, InputRegister>::const_iterator iter;
+    map<const LinguisticVariable*, InputRegister>::const_iterator iter;
 
-    iter = _inputs.find(idLv);
+    iter = _inputs.find(lv);
     if(iter == _inputs.cend())
-        throw NonExistentElementException<tsize>(idLv);
+        throw CommonException(CommonException::NON_EXISTENT_ELEMENT);
 
     return iter->second.value;
 }
 
-bool WorkMemory::existsInput(tsize idLv) const
+bool WorkMemory::existsInput(const LinguisticVariable *lv) const
 {
-    return _inputs.find(idLv) != _inputs.cend();
+    return _inputs.find(lv) != _inputs.cend();
 }
 
 tsize WorkMemory::inputCount() const
@@ -56,86 +58,76 @@ tsize WorkMemory::inputCount() const
     return _inputs.size();
 }
 
-vector<tsize> WorkMemory::inputIds() const
+void WorkMemory::setInputValue(const LinguisticVariable *lv, double value)
 {
-    vector<tsize> ids;
+    map<const LinguisticVariable*, InputRegister>::iterator iter;
 
-    ids.reserve(_inputs.size());
-    for(map<tsize, InputRegister>::const_iterator it = _inputs.cbegin(); it != _inputs.cend(); it++)
-    {
-        ids.push_back(it->first);
-    }
-
-    return ids;
-}
-
-void WorkMemory::setInputValue(tsize idLv, double value)
-{
-    map<tsize, InputRegister>::iterator iter;
-
-    iter = _inputs.find(idLv);
+    iter = _inputs.find(lv);
 
     if(iter == _inputs.end())
-        throw NonExistentElementException<tsize>(idLv);
+        throw CommonException(CommonException::NON_EXISTENT_ELEMENT);
 
     iter->second = value;
 }
 
-void WorkMemory::removeInput(tsize idLv)
+void WorkMemory::removeInput(const LinguisticVariable *lv)
 {
-    _inputs.erase(idLv);
+    _inputs.erase(lv);
 }
 
-bool WorkMemory::addFunction(tsize idLv, tsize idMf, double initialValue)
+bool WorkMemory::addFunction(const LinguisticVariable *lv, const MembershipFunction *mf, double initialValue)
 {
-    map<tsize, InputRegister>::iterator iter;
+    map<const LinguisticVariable*, InputRegister>::iterator iter;
 
-    iter = _inputs.find(idLv);
-    if(iter != _inputs.end())
+    if(lv != NULL && mf != NULL)
     {
-        return iter->second.functions.emplace(idMf, initialValue).second;
+        iter = _inputs.find(lv);
+        if(iter != _inputs.end())
+        {
+            return iter->second.functions.emplace(mf, initialValue).second;
+        }
     }
 
     return false;
 }
 
-double WorkMemory::functionValue(tsize idLv, tsize idMf) const
+double WorkMemory::functionValue(const LinguisticVariable *lv, const MembershipFunction *mf) const
 {
-    map<tsize, InputRegister>::const_iterator inputIter;
-    map<tsize, double>::const_iterator functionIter;
+    map<const LinguisticVariable*, InputRegister>::const_iterator inputIter;
+    map<const MembershipFunction*, double>::const_iterator functionIter;
 
-    inputIter = _inputs.find(idLv);
+    inputIter = _inputs.find(lv);
 
     if(inputIter == _inputs.cend())
-        throw NonExistentElementException<tsize>(idLv);
+        throw CommonException(CommonException::NON_EXISTENT_ELEMENT);
 
-    functionIter = inputIter->second.functions.find(idMf);
+    functionIter = inputIter->second.functions.find(mf);
 
     if(functionIter == inputIter->second.functions.cend())
-        throw NonExistentElementException< pair<tsize, tsize> >(pair<tsize, tsize>(idLv, idMf));
+        throw CommonException(CommonException::NON_EXISTENT_ELEMENT);
 
     return functionIter->second;
 }
 
-bool WorkMemory::existsFunction(tsize idLv, tsize idMf) const
+bool WorkMemory::existsFunction(const LinguisticVariable *lv, const MembershipFunction *mf) const
 {
-    map<tsize, InputRegister>::const_iterator iter;
+    map<const LinguisticVariable*, InputRegister>::const_iterator iter;
 
-    iter = _inputs.find(idLv);
+    iter = _inputs.find(lv);
     if(iter != _inputs.cend())
     {
-        return iter->second.functions.find(idMf) != iter->second.functions.cend();
+        return iter->second.functions.find(mf) != iter->second.functions.cend();
     }
 
     return false;
 }
 
-int WorkMemory::functionCount(tsize idLv) const
+int WorkMemory::functionCount(const LinguisticVariable *lv) const
 {
-    map<tsize, InputRegister>::const_iterator iter;
+    map<const LinguisticVariable*, InputRegister>::const_iterator iter;
     int count = -1;
 
-    iter = _inputs.find(idLv);
+    iter = _inputs.find(lv);
     if(iter != _inputs.cend())
     {
         return iter->second.functions.size();
@@ -144,74 +136,54 @@ int WorkMemory::functionCount(tsize idLv) const
     return count;
 }
 
-vector<tsize> WorkMemory::functionIds(tsize idLv) const
+void WorkMemory::setFunctionValue(const LinguisticVariable *lv, const MembershipFunction *mf, double value)
 {
-    vector<tsize> ids;
-    map<tsize, InputRegister>::const_iterator iter;
+    map<const LinguisticVariable*, InputRegister>::iterator inputIter;
+    map<const MembershipFunction*, double>::iterator functionIter;
 
-    iter = _inputs.find(idLv);
-    if(iter != _inputs.cend())
-    {
-        ids.reserve(iter->second.functions.size());
-        for(map<tsize, double>::const_iterator it = iter->second.functions.cbegin();
-            it != iter->second.functions.cend(); it++)
-        {
-            ids.push_back(it->first);
-        }
-    }
-
-    return ids;
-}
-
-void WorkMemory::setFunctionValue(tsize idLv, tsize idMf, double value)
-{
-    map<tsize, InputRegister>::iterator inputIter;
-    map<tsize, double>::iterator functionIter;
-
-    inputIter = _inputs.find(idLv);
+    inputIter = _inputs.find(lv);
 
     if(inputIter == _inputs.end())
-        throw NonExistentElementException<tsize>(idLv);
+        throw CommonException(CommonException::NON_EXISTENT_ELEMENT);
 
-    functionIter = inputIter->second.functions.find(idMf);
+    functionIter = inputIter->second.functions.find(mf);
 
     if(functionIter == inputIter->second.functions.cend())
-        throw NonExistentElementException< pair<tsize, tsize> >(pair<tsize, tsize>(idLv, idMf));
+        throw CommonException(CommonException::NON_EXISTENT_ELEMENT);
 
     functionIter->second = value;
 }
 
-void WorkMemory::removeFunction(tsize idLv, tsize idMf)
+void WorkMemory::removeFunction(const LinguisticVariable *lv, const MembershipFunction *mf)
 {
-    map<tsize, InputRegister>::iterator iter;
+    map<const LinguisticVariable*, InputRegister>::iterator iter;
 
-    iter = _inputs.find(idLv);
+    iter = _inputs.find(lv);
     if(iter != _inputs.end())
     {
-        iter->second.functions.erase(idMf);
+        iter->second.functions.erase(mf);
     }
 }
 
-bool WorkMemory::addRule(tsize idRule, const knowledgeModule::Rule &rule, double initialValue)
+bool WorkMemory::addRule(const Rule *rule, double initialValue)
 {
-    return _rules.emplace(idRule, RuleRegister(&rule, initialValue)).second;
+    return (rule == NULL) ? false : _rules.emplace(rule, initialValue).second;
 }
 
-double WorkMemory::ruleValue(tsize idRule) const
+double WorkMemory::ruleValue(const Rule *rule) const
 {
-    map<tsize, RuleRegister>::const_iterator iter;
+    map<const Rule*, double>::const_iterator iter;
 
-    iter = _rules.find(idRule);
-
+    iter = _rules.find(rule);
     if(iter == _rules.cend())
-        throw NonExistentElementException<tsize>(idRule);
+        throw CommonException(CommonException::NON_EXISTENT_ELEMENT);
 
-    return iter->second.value;
+    return iter->second;
 }
 
-bool WorkMemory::existsRule(tsize idRule) const
+bool WorkMemory::existsRule(const Rule *rule) const
 {
-    return _rules.find(idRule) != _rules.cend();
+    return _rules.find(rule) != _rules.cend();
 }
 
 tsize WorkMemory::ruleCount() const
@@ -219,56 +191,41 @@ tsize WorkMemory::ruleCount() const
     return _rules.size();
 }
 
-vector<tsize> WorkMemory::ruleIds() const
+void WorkMemory::setRuleValue(const Rule *rule, double value)
 {
-    vector<tsize> ids;
+    map<const Rule*, double>::iterator iter;
 
-    ids.reserve(_rules.size());
-    for(map<tsize, RuleRegister>::const_iterator it = _rules.cbegin(); it != _rules.cend(); it++)
-    {
-        ids.push_back(it->first);
-    }
-
-    return ids;
-}
-
-void WorkMemory::setRuleValue(tsize idRule, double value)
-{
-    map<tsize, RuleRegister>::iterator iter;
-
-    iter = _rules.find(idRule);
-
+    iter = _rules.find(rule);
     if(iter == _rules.end())
-        throw NonExistentElementException<tsize>(idRule);
+        throw CommonException(CommonException::NON_EXISTENT_ELEMENT);
 
-    iter->second.value = value;
+    iter->second = value;
 }
 
-void WorkMemory::removeRule(tsize idRule)
+void WorkMemory::removeRule(const Rule *rule)
 {
-    _rules.erase(idRule);
+    _rules.erase(rule);
 }
 
-bool WorkMemory::addOutput(tsize idLv, double initialValue)
+bool WorkMemory::addOutput(const LinguisticVariable *lv, double initialValue)
 {
-    return _outputs.emplace(idLv, initialValue).second;
+    return (lv == NULL) ? false : _outputs.emplace(lv, initialValue).second;
 }
 
-double WorkMemory::outputValue(tsize idLv) const
+double WorkMemory::outputValue(const LinguisticVariable *lv) const
 {
-    map<tsize, double>::const_iterator iter;
+    map<const LinguisticVariable*, double>::const_iterator iter;
 
-    iter = _outputs.find(idLv);
-
+    iter = _outputs.find(lv);
     if(iter == _outputs.cend())
-        throw NonExistentElementException<tsize>(idLv);
+        throw CommonException(CommonException::NON_EXISTENT_ELEMENT);
 
     return iter->second;
 }
 
-bool WorkMemory::existsOutput(tsize idLv) const
+bool WorkMemory::existsOutput(const LinguisticVariable *lv) const
 {
-    return _outputs.find(idLv) != _outputs.cend();
+    return _outputs.find(lv) != _outputs.cend();
 }
 
 tsize WorkMemory::outputCount() const
@@ -276,34 +233,20 @@ tsize WorkMemory::outputCount() const
     return _outputs.size();
 }
 
-vector<tsize> WorkMemory::outputIds() const
+void WorkMemory::setOutputValue(const LinguisticVariable *lv, double value)
 {
-    vector<tsize> ids;
+    map<const LinguisticVariable*, double>::iterator iter;
 
-    ids.reserve(_outputs.size());
-    for(map<tsize, double>::const_iterator it = _outputs.cbegin(); it != _outputs.cend(); it++)
-    {
-        ids.push_back(it->first);
-    }
-
-    return ids;
-}
-
-void WorkMemory::setOutputValue(tsize idLv, double value)
-{
-    map<tsize, double>::iterator iter;
-
-    iter = _outputs.find(idLv);
-
+    iter = _outputs.find(lv);
     if(iter == _outputs.end())
-        throw NonExistentElementException<tsize>(idLv);
+        throw CommonException(CommonException::NON_EXISTENT_ELEMENT);
 
     iter->second = value;
 }
 
-void WorkMemory::removeOutput(tsize idLv)
+void WorkMemory::removeOutput(const LinguisticVariable *lv)
 {
-    _outputs.erase(idLv);
+    _outputs.erase(lv);
 }
 
 

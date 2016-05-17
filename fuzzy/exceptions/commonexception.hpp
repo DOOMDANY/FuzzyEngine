@@ -1,5 +1,5 @@
-#ifndef BADINSTANCEEXCEPTION_HPP
-#define BADINSTANCEEXCEPTION_HPP
+#ifndef COMMONEXCEPTION_HPP
+#define COMMONEXCEPTION_HPP
 
 /*! *************************************************************
  *                                                              *
@@ -8,10 +8,10 @@
  *          dapr.service@gmail.com                              *
  *          Tel. (33) 3812 5330                                 *
  *          Cel. +52 1 33 1074 1591                             *
- * \date    March, 2016                                         *
+ * \date    May, 2016                                           *
  * \version 0.3                                                 *
  *                                                              *
- * \file    badinstanceexception.hpp                            *
+ * \file    commonexception.hpp                                 *
  *                                                              *
  ****************************************************************/
 
@@ -27,25 +27,40 @@ namespace fuzzy
 namespace exceptions
 {
 
-class BadInstanceException : public std::exception
+class CommonException : public std::exception
 {
 public:
+/**===================================== PUBLIC MEMBERS =====================================**/
+    enum ExceptionType
+    {
+        UNKNOWN,
+        BAD_INSTANCE,
+        DUPLICATED_ITEM,
+        NON_EXISTENT_ELEMENT,
+        NULL_POINTER
+    };
+
+/**===================================== PUBLIC STATIC MEMBERS =====================================**/
+    static const std::string _exceptionTypeStr[];
+
 /**===================================== CONSTRUCTORS =====================================**/
-    BadInstanceException();
-    BadInstanceException(const std::string &arg);
+    CommonException(ExceptionType type);
+    CommonException(const std::string &arg);
 
 /**===================================== DESTRUCTOR =====================================**/
-    virtual ~BadInstanceException();
+    virtual ~CommonException();
 
 /**===================================== PUBLIC MEMBER FUNCTIONS =====================================**/
     virtual const char *what() const throw();
 
 protected:
 /**===================================== PROTECTED MEMBER VARIABLES =====================================**/
-    std::string msg;
+    ExceptionType _type;
+    std::string _msg;
+
 };
 
 }
 }
 
-#endif // BADINSTANCEEXCEPTION_HPP
+#endif // COMMONEXCEPTION_HPP

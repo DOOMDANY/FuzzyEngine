@@ -34,6 +34,16 @@ enum LogicalOperators
     XOR
 };
 
+enum LogicalFunctions
+{
+    AVERAGE,
+    MINIMUM,
+    MAXIMUM,
+    COMPLEMENT,
+    DIFFERENCE,
+    CUSTOM
+};
+
 /**===============================*~* NAMESPACE CLASES *~*===============================**/
 class FuzzyEngine;
 
