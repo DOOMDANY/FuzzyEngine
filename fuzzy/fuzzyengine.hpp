@@ -8,7 +8,7 @@
  *          dapr.service@gmail.com                              *
  *          Tel. (33) 3812 5330                                 *
  *          Cel. +52 1 33 1074 1591                             *
- * \date    February, 2016                                      *
+ * \date    May, 2016                                           *
  * \version 0.3                                                 *
  *                                                              *
  * \file    fuzzyengine.hpp                                     *
@@ -16,6 +16,7 @@
  ****************************************************************/
 
 /**===================*~* STL LIBRARIES *~*===================**/
+#include <map>
 #include <vector>
 #include <string>
 
@@ -30,7 +31,7 @@ namespace fuzzy
 class FuzzyEngine
 {
 public:
-    /**===============================*~* PUBLIC MEMBERS *~*===============================**/
+/**===============================*~* PUBLIC MEMBERS *~*===============================**/
     /*!
      * \brief   States - enum, represents the error states into Fuzzy Engine
      *
@@ -54,55 +55,62 @@ public:
         INVALID_RULE_FORMAT,/*!< It means that one string evaluated to be a rule failed the parsing. */
         OUT_OF_RANGE,       /*!< When any value is less or bigger than the limits or when a
                                  std::out_of_range has been thrown. */
-        BAD_CONFIG,         /*!< This state occurs when a BadConfigException is thrown into the
+        BAD_CONFIG,         /*!< This state occurs when a BadConfig Exception is thrown into the
                                  Inference Engine. */
-        CONCURRENCY_ERROR,  /*!< If a problem related with multi-threading features occurs */
+        INVALID_MF,
         UNKNOWN_ERROR       /*!< When an unknown error has occurred. */
     };
 
-    /**===================================== CONSTRUCTOR =====================================**/
+/**===================================== PUBLIC STATIC VARIABLES =====================================**/
+    static std::string errorStr[];
+
+/**===================================== CONSTRUCTORS =====================================**/
     FuzzyEngine();
 
-    /**===================================== DESTRUCTOR =====================================**/
+/**===================================== DESTRUCTOR =====================================**/
     ~FuzzyEngine();
 
-    /**===================================== PUBLIC MEMBER FUNCTIONS =====================================**/
+/**===================================== PUBLIC MEMBER FUNCTIONS =====================================**/
     // >>>>>>>>>>>>>>>>>>>>>>> FuzzyEngine Management
     void resetState();
     int lastError() const;
     std::string lastErrorStr() const;
 
     // >>>>>>>>>>>>>>>>>>>>>>> Knowledge Base Management
+        // ----------------------- Knowledge Bases
     bool createKnowledgeBase(const std::string &name);
-    const std::string &knowledgeBaseName(tsize kbId) const;
-    tsize knowledgeBaseId(const std::string &name) const;
-    tsize linguisticVariableCount(tsize kbId) const;
-    tsize ruleCount(tsize kbId) const;
-    bool renameKnowledgeBase(tsize kbId, const std::string &name);
-    void removeKnowledgeBase(tsize kbId);
+    std::string knowledgeBaseName(tsize idKb) const;
+    int idKnowledgeBase(const std::string &name) const;
+    tsize linguisticVariableCount(tsize idKb, bool isInput = true) const;
+    tsize ruleCount(tsize idKb) const;
+    bool renameKnowledgeBase(tsize idKb, const std::string &name);
+    void removeKnowledgeBase(tsize idKb);
 
-    bool createRule(tsize kbId, const std::string &ruleStr);
-    const std::string &rule(tsize kbId, tsize ruleId) const;
-    std::string condition(tsize kbId, tsize ruleId) const;
-    std::string conclusion(tsize kbId, tsize ruleId) const;
-    bool replaceRule(tsize kbId, tsize ruleId, const std::string &ruleStr);
-    void removeRule(tsize kbId, tsize ruleId);
+        // ----------------------- Rules
+    //pending reformat de rule string IF LV IS MF AND LV IS MF THEN LV IS MF instead of LV=MF&LV=MF->LV=MF
+    bool createRule(tsize idKb, const std::string &ruleStr);
+    //pending reformat de rule string IF LV IS MF AND LV IS MF THEN LV IS MF instead of LV=MF&LV=MF->LV=MF
+    std::string rule(tsize idKb, tsize idRule) const;
+    bool replaceRule(tsize idKb, tsize idRule, const std::string &ruleStr);
+    void removeRule(tsize idKb, tsize idRule);
 
-    bool createLinguisticVariable(tsize kbId, const std::string &name, double lowerLimit, double upperLimit,
-                                  bool isInput);
-    const std::string &linguisticVariableName(tsize kbId, tsize lvId, bool isInput) const;
-    tsize linguisticVariableId(tsize kbId, const std::string &name, bool isInput) const;
-    tsize membershipFunctionCount(tsize kbId, tsize lvId, bool isInput) const;
-    double upperLimit(tsize kbId, tsize lvId, bool isInput) const;
-    double lowerLimit(tsize kbId, tsize lvId, bool isInput) const;
-    bool renameLinguisticVariable(tsize kbId, tsize lvId, bool isInput, const std::string &name);
-    bool setLinguisticVariableLimits(tsize kbId, tsize lvId, bool isInput, double lowerLimit, double upperLimit);
-    void removeLinguisticVariable(tsize kbId, tsize lvId, bool isInput);
+        // ----------------------- Linguistic Variables
+    bool createLinguisticVariable(tsize idKb, const std::string &name, double lowerLimit, double upperLimit,
+                                  bool isInput = true);
+    std::string linguisticVariableName(tsize idKb, tsize idLv, bool isInput = true) const;
+    int idLinguisticVariable(tsize idKb, const std::string &name, bool isInput = true) const;
+    tsize membershipFunctionCount(tsize idKb, tsize idLv, bool isInput = true) const;
+    double upperLimit(tsize idKb, tsize idLv, bool isInput = true) const;
+    double lowerLimit(tsize kbId, tsize idLv, bool isInput = true) const;
+    bool renameLinguisticVariable(tsize idKb, tsize idLv, bool isInput, const std::string &name);
+    bool setLinguisticVariableLimits(tsize idKb, tsize idLv, bool isInput, double lowerLimit, double upperLimit);
+    void removeLinguisticVariable(tsize idKb, tsize idLv, bool isInput = true);
 
-    bool createMembershipFunction(tsize kbId, tsize lvId, bool isInput,
-                                  const std::string &name, const std::vector<double> &params,
+        // ----------------------- Membership Functions
+    bool createMembershipFunction(tsize idKb, tsize idLv, bool isInput,
+                                  const std::string &name, const double *params,
                                   knowledgeModule::memberFunctions::MFType type);
-    const std::string &membershipFunctionName(tsize kbId, tsize lvId, bool isInput, tsize mfId) const;
+    const std::string &membershipFunctionName(tsize kbId, tsize idLv, bool isInput, tsize idMf) const;
     tsize membershipFunctionId(tsize kbId, tsize lvId, bool isInput, const std::string &name) const;
     const std::vector<double> &parameters(tsize kbId, tsize lvId, bool isInput, tsize mfId) const;
     tsize parameterCount(tsize kbId, tsize lvId, bool isInput, tsize mfId) const;
@@ -127,11 +135,30 @@ public:
     bool setLogicalOperation();
 
 private:
-    States _lastError;
+    mutable States _lastError;
 
+    mutable std::map<tsize, knowledgeModule::KnowledgeBase> _knowledgeBases;
+
+/**===================================== PRIVATE MEMBER FUNCTIONS =====================================**/
+    inline knowledgeModule::KnowledgeBase *findKnowledgeBase(tsize idKb) const;
+    inline knowledgeModule::Rule *findRule(tsize idKb, tsize idRule) const;
+    inline knowledgeModule::LinguisticVariable *findLinguisticVariable(
+            tsize idKb, tsize idLv, bool isInput = true) const;
+    inline knowledgeModule::memberFunctions::MembershipFunction *findMembershipFunction(
+            tsize idKb, tsize idLv, tsize idMf, bool isInput = true) const;
 
 };
 
 }
 
 #endif // FUZZYENGINE_HPP
+
+
+
+
+
+
+
+
+
+

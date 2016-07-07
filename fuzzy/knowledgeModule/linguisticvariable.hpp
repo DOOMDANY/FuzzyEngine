@@ -42,15 +42,12 @@ public:
     void rename(const std::string &name);
     const std::string &name() const;
 
-    //this method can throws: std::out_of_range
-    void setLimits(double lowerLimit, double upperLimit);
+    bool setLimits(double lowerLimit, double upperLimit);
 
-    //this method can throws: std::out_of_range
-    void setLowerLimit(double lowerLimit);
+    bool setLowerLimit(double lowerLimit);
     double lowerLimit() const;
 
-    //this method can throws: std::out_of_range
-    void setUpperLimit(double upperLimit);
+    bool setUpperLimit(double upperLimit);
     double upperLimit() const;
 
 /**===================================== PUBLIC MEMBER FUNCTIONS =====================================**/

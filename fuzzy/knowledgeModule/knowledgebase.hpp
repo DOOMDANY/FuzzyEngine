@@ -58,14 +58,19 @@ public:
 
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Linguistic Variables Management
     //this method can throws: fuzzy::exceptions::CommonException(DUPLICATED_ITEM)
-    bool createLinguisticVariable(const std::string &name, double lowerLimit, double upperLimit, bool isInput = true);
+    //                        std::out_of_range
+    void createLinguisticVariable(const std::string &name, double lowerLimit, double upperLimit, bool isInput = true);
     //this method can throws: fuzzy::exceptions::CommonException(CommonException::NON_EXISTENT_ELEMENT)
     const LinguisticVariable &linguisticVariable(tsize idLv, bool isInput = true) const;
     const std::map<tsize, LinguisticVariable> &linguisticVariables(bool isInput = true) const;
     int idLinguisticVariable(const std::string &name, bool isInput = true) const;
     tsize linguisticVariableCount(bool isInput = true) const;
-    bool renameLinguisticVariable(const std::string &name, tsize idLv, bool isInput = true);
-    bool setLinguisticVariableLimits(double lowerLimit, double upperLimit, int idLv, bool isInput = true);
+    //this method can throws: fuzzy::exceptions::CommonException(NOT_EXISTENT_ELEMENT)
+    //                        fuzzy::exceptions::CommonException(DUPLICATED_ITEM)
+    void renameLinguisticVariable(const std::string &name, tsize idLv, bool isInput = true);
+    //this method can throws: fuzzy::exceptions::CommonException(NOT_EXISTENT_ELEMENT)
+    //                        std::out_of_range
+    void setLinguisticVariableLimits(double lowerLimit, double upperLimit, int idLv, bool isInput = true);
     void removeLinguisticVariable(tsize idLv, bool isInput = true);
 
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Membership Functions Management

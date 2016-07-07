@@ -115,28 +115,26 @@ void KnowledgeBase::removeRule(tsize idRule)
 }
 
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Linguistic Variables Management
-bool KnowledgeBase::createLinguisticVariable(const string &name, double lowerLimit, double upperLimit, bool isInput)
+void KnowledgeBase::createLinguisticVariable(const string &name, double lowerLimit, double upperLimit, bool isInput)
 {
     map<tsize, LinguisticVariable> &variables = isInput ? _inputs : _outputs;
-    bool success = true;
 
-    try
+    if(variables.empty())
     {
-        if(variables.empty())
-            variables.insert(pair<tsize, LinguisticVariable>
-                             (1u, LinguisticVariable(name, lowerLimit, upperLimit)));
+        variables.insert(pair<tsize, LinguisticVariable>(1u, LinguisticVariable(name, lowerLimit, upperLimit)));
+    }
+    else
+    {
+        if(idLinguisticVariable(name, isInput) >= 0)
+        {
+            throw(CommonException(CommonException::DUPLICATED_ITEM));
+        }
         else
         {
-            if(idLinguisticVariable(name, isInput) >= 0)
-                throw(CommonException(CommonException::DUPLICATED_ITEM));
-            else
-                variables.insert(pair<tsize, LinguisticVariable>
-                                 (variables.crbegin()->first + 1u, LinguisticVariable(name, lowerLimit, upperLimit)));
+            variables.insert(pair<tsize, LinguisticVariable>(variables.crbegin()->first + 1u,
+                                                             LinguisticVariable(name, lowerLimit, upperLimit)));
         }
     }
-    catch(...){success = false;}
-
-    return success;
 }
 
 const LinguisticVariable &KnowledgeBase::linguisticVariable(tsize idLv, bool isInput) const
@@ -147,9 +145,13 @@ const LinguisticVariable &KnowledgeBase::linguisticVariable(tsize idLv, bool isI
     it = isInput ? _inputs.find(idLv) : _outputs.find(idLv);
     end = isInput ? _inputs.cend() : _outputs.cend();
     if(it == end)
+    {
         throw CommonException(CommonException::NON_EXISTENT_ELEMENT);
+    }
     else
+    {
         return it->second;
+    }
 }
 
 const map<tsize, LinguisticVariable> &KnowledgeBase::linguisticVariables(bool isInput) const
@@ -170,7 +172,9 @@ int KnowledgeBase::idLinguisticVariable(const string &name, bool isInput) const
     while(it != end)
     {
         if(it->second.name() == name)
+        {
             return it->first;
+        }
         it++;
     }
 
@@ -182,44 +186,58 @@ tsize KnowledgeBase::linguisticVariableCount(bool isInput) const
     return isInput ? _inputs.size() : _outputs.size();
 }
 
-bool KnowledgeBase::renameLinguisticVariable(const string &name, tsize idLv, bool isInput)
+void KnowledgeBase::renameLinguisticVariable(const string &name, tsize idLv, bool isInput)
 {
     map<tsize, LinguisticVariable>::iterator it;
     map<tsize, LinguisticVariable>::iterator end;
-    bool success = false;
+
+    int idAux;
 
     it = isInput ? _inputs.find(idLv) : _outputs.find(idLv);
     end = isInput ? _inputs.end(): _outputs.end();
 
     if(it != end)
     {
-        it->second.rename(name);
-        success = true;
-    }
+        if(it->second.name() == name)
+        {
+            it->second.rename(name);
+        }
+        else
+        {
+            idAux = idLinguisticVariable(name, isInput);
 
-    return success;
+            if(idAux == -1)
+            {
+                it->second.rename(name);
+            }
+            else
+            {
+                throw CommonException(CommonException::DUPLICATED_ITEM);
+            }
+        }
+    }
+    else
+    {
+        throw CommonException(CommonException::NON_EXISTENT_ELEMENT);
+    }
 }
 
-bool KnowledgeBase::setLinguisticVariableLimits(double lowerLimit, double upperLimit, int idLv, bool isInput)
+void KnowledgeBase::setLinguisticVariableLimits(double lowerLimit, double upperLimit, int idLv, bool isInput)
 {
     map<tsize, LinguisticVariable>::iterator it;
     map<tsize, LinguisticVariable>::iterator end;
-    bool success = false;
 
     it = isInput ? _inputs.find(idLv) : _outputs.find(idLv);
     end = isInput ? _inputs.end(): _outputs.end();
 
     if(it != end)
     {
-        try
-        {
-            it->second.setLimits(lowerLimit, upperLimit);
-            success = true;
-        }
-        catch(...){}
+        it->second.setLimits(lowerLimit, upperLimit);
     }
-
-    return success;
+    else
+    {
+        throw CommonException(CommonException::NON_EXISTENT_ELEMENT);
+    }
 }
 
 void KnowledgeBase::removeLinguisticVariable(tsize idLv, bool isInput)
@@ -235,15 +253,21 @@ void KnowledgeBase::removeLinguisticVariable(tsize idLv, bool isInput)
         while(flag && dependenciesIt != rulesIt->second.dependencies(isInput).cend())
         {
             if(dependenciesIt->first == idLv)
+            {
                 flag = false;
+            }
 
             dependenciesIt++;
         }
 
         if(flag)
+        {
             rulesIt++;
+        }
         else
+        {
             rulesIt = _rules.erase(rulesIt);
+        }
     }
 
     isInput ? _inputs.erase(idLv) : _outputs.erase(idLv);

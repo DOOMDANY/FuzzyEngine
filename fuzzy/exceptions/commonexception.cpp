@@ -57,6 +57,11 @@ const char *CommonException::what() const throw()
     return _msg.c_str();
 }
 
+CommonException::ExceptionType CommonException::type() const
+{
+    return _type;
+}
+
 
 
 

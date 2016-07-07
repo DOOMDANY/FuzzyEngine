@@ -30,7 +30,10 @@ using namespace fuzzy::exceptions;
 LinguisticVariable::LinguisticVariable(const string &name, double lowerLimit, double upperLimit) :
     _name(name)
 {
-    setLimits(lowerLimit, upperLimit);
+    if(!setLimits(lowerLimit, upperLimit))
+    {
+        throw out_of_range("Lower limit is greater than upper limit.");
+    }
 }
 
 /**===================================== DESTRUCTOR =====================================**/
@@ -50,23 +53,27 @@ const string &LinguisticVariable::name() const
     return _name;
 }
 
-void LinguisticVariable::setLimits(double lowerLimit, double upperLimit)
+bool LinguisticVariable::setLimits(double lowerLimit, double upperLimit)
 {
     if(lowerLimit > upperLimit)
-        throw out_of_range("Lower limit is greater than upper limit.");
-    else
     {
-        _lowerLimit = lowerLimit;
-        _upperLimit = upperLimit;
+        return false;
     }
+    _lowerLimit = lowerLimit;
+    _upperLimit = upperLimit;
+
+    return true;
 }
 
-void LinguisticVariable::setLowerLimit(double lowerLimit)
+bool LinguisticVariable::setLowerLimit(double lowerLimit)
 {
     if(lowerLimit > _upperLimit)
-        throw out_of_range("Lower limit is greater than upper limit.");
-    else
-        _lowerLimit = lowerLimit;
+    {
+        return false;
+    }
+    _lowerLimit = lowerLimit;
+
+    return true;
 }
 
 double LinguisticVariable::lowerLimit() const
@@ -74,12 +81,15 @@ double LinguisticVariable::lowerLimit() const
     return _lowerLimit;
 }
 
-void LinguisticVariable::setUpperLimit(double upperLimit)
+bool LinguisticVariable::setUpperLimit(double upperLimit)
 {
     if(_lowerLimit > upperLimit)
-        throw out_of_range("Lower limit is greater than upper limit.");
-    else
-        _upperLimit = upperLimit;
+    {
+        return false;
+    }
+    _upperLimit = upperLimit;
+
+    return true;
 }
 
 double LinguisticVariable::upperLimit() const
@@ -91,17 +101,21 @@ double LinguisticVariable::upperLimit() const
 void LinguisticVariable::createMembershipFunction(const string &functionName, const double *params, MFType type)
 {
     if(_memberFunctions.empty())
-        _memberFunctions.insert(pair<tsize, MembershipFunction>
-                                (1u, MembershipFunction(functionName, type, params, this)));
+    {
+        _memberFunctions.insert(
+                    pair<tsize, MembershipFunction>(1u, MembershipFunction(functionName, type, params, this)));
+    }
     else
     {
         if(idMembershipFunction(functionName) > 0)
+        {
             throw(CommonException(CommonException::DUPLICATED_ITEM));
+        }
         else
         {
-            _memberFunctions.insert(pair<tsize, MembershipFunction>
-                                    (_memberFunctions.crbegin()->first + 1u,
-                                     MembershipFunction(functionName, type, params, this)));
+            _memberFunctions.insert(
+                        pair<tsize, MembershipFunction>(_memberFunctions.crbegin()->first + 1u,
+                                                        MembershipFunction(functionName, type, params, this)));
         }
     }
 }

@@ -53,6 +53,8 @@ public:
 /**===================================== PUBLIC MEMBER FUNCTIONS =====================================**/
     virtual const char *what() const throw();
 
+    ExceptionType type() const;
+
 protected:
 /**===================================== PROTECTED MEMBER VARIABLES =====================================**/
     ExceptionType _type;

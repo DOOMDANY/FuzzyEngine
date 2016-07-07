@@ -47,6 +47,7 @@ public:
 /**===================================== PUBLIC OVERLOADED OPERATORS =====================================**/
     const Rule &operator = (const Rule &rule)
     {
+        dropRule();
         _condition = rule._condition;
         _conclusion = rule._conclusion;
 
@@ -60,6 +61,7 @@ public:
 
     Rule &operator = (Rule &&rule)
     {
+        dropRule();
         _condition.swap(rule._condition);
         _conclusion.swap(rule._conclusion);
 
